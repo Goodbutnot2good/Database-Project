@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<body>
+	<a href="/login">Login</a>
+	<br>
+	<a href="/register">Register</a>
+
+
+<style type="text/css">
+    table, th, td{
+        border: 1px solid black;
+    }
+</style>
+
+<table>
+    <th>item_id</th>
+    <th>email</th>
+    <th>post time</th>
+    <th>file path</th>
+    <th>item name</th>
+
+{% for line in posts %}
+    <tr>
+        <td>{{line.item_id}}</td>
+        <td>{{line.email_post}}</td>
+        <td>{{line.post_time}}</td>
+        <td>{{line.file_path}}</td>
+        <td>{{line.item_name}}</td>
+    </tr>
+{% endfor %}
+</table>
+
+</body>
+</html>

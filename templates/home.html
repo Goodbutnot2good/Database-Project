@@ -1,0 +1,47 @@
+<style type="text/css">
+	table, td {
+		border: 1px solid black;
+	}
+	form {
+		
+	}
+</style>
+
+<html>
+	<head>
+	</head>
+	<body>
+		<p>Welcome {{fname}}</p>
+		<form action="/post" method="POST"> 
+			<input type="text" name = "file_path" placeholder="file path" required/> </br>
+			<input type="text" name = "item_name" placeholder="item name" required/> </br>
+
+			<input type="checkbox" name = "public" checked = "true"> Public </br>
+			<input type="submit" value = Post />
+		</form>
+
+		<p>Here are your posts:</p>
+
+		<table>
+			<th>item_id</th>
+			<th>email</th>
+			<th>post time</th>
+			<th>file path</th>
+			<th>item name</th>
+
+			{% for line in posts %}
+				<tr>
+					<td>{{line.item_id}}</td>
+					<td>{{line.email_post}}</td>
+					<td>{{line.post_time}}</td>
+					<td>{{line.file_path}}</td>
+					<td>{{line.item_name}}</td>
+				</tr>
+			{% endfor %}
+		</table>
+
+		<a href="/select_blogger">Select a blogger</a>
+		<br>
+		<a href="/logout">Logout</a>
+	</body>
+</html>
