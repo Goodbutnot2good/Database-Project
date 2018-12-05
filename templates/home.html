@@ -21,11 +21,10 @@
 	}
 	.logout_box {
 		text-align: center;
-		font-size: x-large;
+		font-size: large;
 		float: right;
 		width: 6%;
 		border: 3px dotted olive;
-		padding: 5px;
 	}
 	.post_box {
 		text-align: center;
@@ -50,16 +49,12 @@
 		margin: 0 auto;
 		border: 3px dotted rosybrown;
 	}
-	.blog_box, .tag_box {
+	.blog_box {
 		margin: 0 auto;
 		text-align: center;
-		font-size: x-large;
 		border: 3px dotted teal;
 		width: 10%;
-		display: inline-block;
-		padding: 5px;
 	}
-
 </style>
 
 <html>
@@ -82,7 +77,7 @@
 					<input type="text" name = "file_path" placeholder="file path" required/> <br>
 					<input type="text" name = "item_name" placeholder="item name" required/> <br>
 
-					<input type="checkbox" name = "public" checked = "true"/><div class="post_label">Public</div><br>
+					<input type="checkbox" name = "public" checked = "true"><div class="post_label">Public</div><br>
 					<input type="submit" value = Post />
 				</div>
 			</form>
@@ -114,9 +109,6 @@
 		<br>
 		<div class="blog_box">
 			<a href="/select_blogger">Select a blogger</a>
-		</div>
-		<div class="blog_box">
-			<a href="/tag">Manage my Tags</a>
 		</div>
 	</body>
 </html>
