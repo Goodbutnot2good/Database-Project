@@ -1,0 +1,84 @@
+<style type="text/css">
+    .back_box {
+        margin: 0 auto;
+		text-align: center;
+		border: 3px dotted teal;
+		width: 10%;
+		display: inline-block;
+        padding: 5px;
+        font-size: x-large;
+    }
+    .welcome_box {
+		text-align: center;
+		font-size: large;
+		display: block;
+    	margin: 0 auto;
+		width: 50%;
+		border: 3px dotted orange;
+	}
+    .view_box {
+		text-align: center;
+        font-size: large;
+        display: block;
+		border: 3px dotted rosybrown;
+        padding-bottom: 10px;
+	}
+    .table { 
+        display: table; 
+        border: 2px solid black;
+        width: 90%;
+        margin: 0 auto;
+        padding-top: 10px;
+    } 
+    .table > * { 
+        display: table-row; 
+    }
+    .table > * > * { 
+        display: table-cell; 
+        width: 30%;
+        padding-top: 5px;
+        border: 2px solid black;
+    }
+</style>
+
+<html>
+    <head>
+    </head>
+    <body>
+        <div class="welcome_box">
+            <h1>Welcome {{fname}}</h1>
+        </div>
+        <br>
+
+        <div class="view_box">
+            <h3>Here are your Tags currently waiting for approval:</h3>
+        
+            <div class="table">
+                <div class="tr">
+                    <div class="td">email of tagger</div>
+                    <div class="td">item id</div>
+                    <div class="td">tagged time</div>
+                </div>
+
+                {% for line in tags %}
+                    <div class="tr">
+                        <div class="td">{{line.email_tagger}}</div>
+                        <div class="td">{{line.item_id}}</div>
+                        <div class="td">{{line.tagtime}}</div>
+                        <form action="/edit_tag" method="POST">
+                            <input type="hidden" name="email_tagger" value="{{line.email_tagger}}">
+                            <input type="hidden" name="item_id" value="{{line.item_id}}">
+                            <div class="td"><input type="radio" name="new_status" value = "approve" required/>Approve</div>
+                            <div class="td"><input type="radio" name="new_status" value = "decline"/>Decline</div>
+                            <div class="td"><input type="submit" value = Submit /></div>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br>
+        <div class="back_box">
+            <a href="/home">Back to Home</a>
+        </div>
+    </body>
+</html>
