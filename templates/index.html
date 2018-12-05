@@ -1,39 +1,89 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-
-</head>
-
-<body>
-	<a href="/login">Login</a>
-	<br>
-	<a href="/register">Register</a>
-
-
 <style type="text/css">
-    table, th, td{
+    .login_box, .register_box{
+        text-align: center;
+		display: inline-block;
+		font-size: x-large;
+		margin: 0 auto;
+		border: 3px dotted green;
+		padding: 5px;
+		width: 7%;
+    }
+    .info_box {
+		text-align: center;
+		border: 3px dotted green;
+        font-size: x-large;
+        padding: 5px;
+	}
+    .welcome_box {
+        text-align: center;
+		font-size: large;
+		display: block;
+    	margin: 0 auto;
+		width: 50%;
+		border: 3px dotted orange;
+    }
+    .team_box {
+        text-align: center;
+		font-size: x-large;
+		float: right;
+		width: 20%;
+		border: 3px dotted olive;
+		padding: 2px;
+    }
+    table {
+		font-size: x-large;
+		display: inline-block;
+    	margin: 0 auto;
+        padding: 5px;
         border: 1px solid black;
+	}
+    td {
+        border: 1px solid black;
+        padding: 10px;
     }
 </style>
 
-<table>
-    <th>item_id</th>
-    <th>email</th>
-    <th>post time</th>
-    <th>file path</th>
-    <th>item name</th>
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
 
-{% for line in posts %}
-    <tr>
-        <td>{{line.item_id}}</td>
-        <td>{{line.email_post}}</td>
-        <td>{{line.post_time}}</td>
-        <td>{{line.file_path}}</td>
-        <td>{{line.item_name}}</td>
-    </tr>
-{% endfor %}
-</table>
+    <body>
+        <div class="team_box">
+            <h4>Proudly created by Sofiia Barysheva, Max Kim, Yu Zhang</h4>
+        </div>
 
-</body>
+        <div class="welcome_box">
+			<h1>Welcome to PriCoSha</h1>
+        </div>
+
+        <div class="login_box">
+            <a href="/login">Login</a>
+        </div>
+        <div class="register_box">
+            <a href="/register">Register</a>
+        </div>
+
+        <br><br>
+
+        <div class="info_box">
+            <table>
+                <th>item_id</th>
+                <th>email</th>
+                <th>post time</th>
+                <th>file path</th>
+                <th>item name</th>
+
+            {% for line in posts %}
+                <tr>
+                    <td>{{line.item_id}}</td>
+                    <td>{{line.email_post}}</td>
+                    <td>{{line.post_time}}</td>
+                    <td>{{line.file_path}}</td>
+                    <td>{{line.item_name}}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </body>
 </html>
