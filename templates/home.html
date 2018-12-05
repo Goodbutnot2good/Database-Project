@@ -1,47 +1,114 @@
 <style type="text/css">
+	body {
+		background-image: url("test.jpg");
+	}
+	table {
+    	margin: 0px auto; 
+		font-size: large;
+		border: 1px solid black;          
+	}​	
 	table, td {
 		border: 1px solid black;
+		font-size: large;
 	}
-	form {
-		
+	.welcome_box {
+		text-align: center;
+		font-size: large;
+		display: block;
+    	margin: 0 auto;
+		width: 50%;
+		border: 3px dotted orange;
+	}
+	.logout_box {
+		text-align: center;
+		font-size: large;
+		float: right;
+		width: 6%;
+		border: 3px dotted olive;
+	}
+	.post_box {
+		text-align: center;
+		border: 3px dotted green;
+	}
+	.post_field * {
+		width: 300px; 
+		height: 50px;
+		display: inline-block;
+    	margin: 0 auto;
+	}
+	.post_label {
+		display: flex;
+		margin-bottom: 0px;
+		width: 10px;
+		height: 10px;
+  		text-align: left;
+	}
+	.view_box {
+		text-align: center;
+		display: block;
+		margin: 0 auto;
+		border: 3px dotted rosybrown;
+	}
+	.blog_box {
+		margin: 0 auto;
+		text-align: center;
+		border: 3px dotted teal;
+		width: 10%;
 	}
 </style>
 
 <html>
-	<head>
+	<head> 
 	</head>
 	<body>
-		<p>Welcome {{fname}}</p>
-		<form action="/post" method="POST"> 
-			<input type="text" name = "file_path" placeholder="file path" required/> </br>
-			<input type="text" name = "item_name" placeholder="item name" required/> </br>
+		<div class="logout_box">
+			<a href="/logout">Logout</a>
+		</div>
+		<div class="welcome_box">
+			<h1>Welcome {{fname}}</h1>
+		</div>
 
-			<input type="checkbox" name = "public" checked = "true"> Public </br>
-			<input type="submit" value = Post />
-		</form>
-
-		<p>Here are your posts:</p>
-
-		<table>
-			<th>item_id</th>
-			<th>email</th>
-			<th>post time</th>
-			<th>file path</th>
-			<th>item name</th>
-
-			{% for line in posts %}
-				<tr>
-					<td>{{line.item_id}}</td>
-					<td>{{line.email_post}}</td>
-					<td>{{line.post_time}}</td>
-					<td>{{line.file_path}}</td>
-					<td>{{line.item_name}}</td>
-				</tr>
-			{% endfor %}
-		</table>
-
-		<a href="/select_blogger">Select a blogger</a>
 		<br>
-		<a href="/logout">Logout</a>
+
+		<div class="post_box">
+			<form action="/post" method="POST">
+				<h3>Make a Post</h3>
+				<div class="post_field">
+					<input type="text" name = "file_path" placeholder="file path" required/> <br>
+					<input type="text" name = "item_name" placeholder="item name" required/> <br>
+
+					<input type="checkbox" name = "public" checked = "true"><div class="post_label">Public</div><br>
+					<input type="submit" value = Post />
+				</div>
+			</form>
+		</div>
+
+		<br>
+
+		<div class="view_box">
+			<h3>Here are your posts:</h3>
+
+			<table>
+				<th>item_id</th>
+				<th>email</th>
+				<th>post time</th>
+				<th>file path</th>
+				<th>item name</th>
+	
+				{% for line in posts %}
+					<tr>
+						<td>{{line.item_id}}</td>
+						<td>{{line.email_post}}</td>
+						<td>{{line.post_time}}</td>
+						<td>{{line.file_path}}</td>
+						<td>{{line.item_name}}</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<br>
+		<div class="blog_box">
+			<a href="/select_blogger">Select a blogger</a>
+		</div>
 	</body>
 </html>
