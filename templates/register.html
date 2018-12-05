@@ -1,19 +1,53 @@
+<style type="text/css">
+	.back_button {
+		text-align: center;
+		display: inline-block;
+		font-size: x-large;
+		margin: 0 auto;
+		border: 3px dotted rosybrown;
+		padding: 5px;
+		width: 7%;
+	}
+	.signup_box {
+		text-align: center;
+		display: block;
+		width: 80%;
+		margin: 0 auto;
+		border: 3px dotted pink;
+		font-size: x-large;
+		padding: 5px;
+	}
+	input {
+		width: 40%; 
+		height: 9%;
+		font-size: 25px;
+		display: inline-block;
+    	margin: 0 auto;
+	}
+</style>
+
 <html>
 <head>
 </head>
 <body>
-<form action="/registerAuth" method="POST">
-    <input type="text" name = "first_name" placeholder="First name" required/> </br>
-    <input type="text" name = "last_name" placeholder="Last name" required/></br>
-	<input type="text" name = "email" placeholder="email" required/> </br>
-	<input type="password" name = "password" placeholder="password" required/></br>
-	<input type="submit" value = Register />
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
-	{% endif %}
-</form>
-
-<a href="/">Go back</a>
+	<div class="signup_box">
+		<form action="/registerAuth" method="POST">
+			<div class="form_fields">
+				<input type="text" name = "first_name" placeholder="First name" required/> </br>
+				<input type="text" name = "last_name" placeholder="Last name" required/></br>
+				<input type="text" name = "email" placeholder="email" required/> </br>
+				<input type="password" name = "password" placeholder="password" required/></br>
+				<input type="submit" value = Register />
+				{% if error %}
+					<p class="error"><strong>Error:</strong> {{error}}</p>
+				{% endif %}
+			</div>
+		</form>
+	</div>
+	<br>
+	<div class="back_button">
+		<a href="/">Go back</a>
+	</div>
 
 </body>
 
