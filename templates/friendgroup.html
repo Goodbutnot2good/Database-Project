@@ -1,0 +1,114 @@
+<style type="text/css">
+	table {
+    	font-size: x-large;
+    	margin: 0 auto;
+        padding: 5px;
+        border: 1px solid black; 
+		text-align: center;       
+	}​	
+	table, td {
+		border: 1px solid black;
+		font-size: x-large;
+		padding: 5px;
+		text-align: center;
+        width: 40%;
+	}
+	.welcome_box {
+		text-align: center;
+		font-size: large;
+		display: block;
+    	margin: 0 auto;
+		width: 50%;
+		border: 3px dotted orange;
+	}
+	.view_box {
+		text-align: center;
+		display: block;
+		margin: 0 auto;
+		border: 3px dotted rosybrown;
+		padding: 5px;
+	}
+	.home_box, .tag_box {
+		margin: 0 auto;
+		text-align: center;
+		font-size: x-large;
+		border: 3px dotted teal;
+		width: 10%;
+		display: inline-block;
+		padding: 5px;
+	}
+	input {
+		font-size: x-large;
+		padding: 5px;
+		text-align: center;
+        width: 40%;
+        height: 7%;
+	}
+    .add_friend_box, .remove_friend_box {
+        text-align: center;
+        display: inline-block;
+		font-size: x-large;
+        width: 9%;
+		border: 3px dotted green;
+    }
+    .create_friendgroup {
+        text-align: center;
+        display: block;
+		font-size: x-large;
+        width: 80%;
+        margin: 0 auto;
+        border: 3px dotted violet;
+    }
+</style>
+
+<html>
+	<head> 
+	</head>
+	<body>
+		<div class="welcome_box">
+			<h1>Welcome {{fname}}</h1>
+        </div>
+        <br>
+        <div class="add_friend_box">
+			<a href="/add_friend">Add a friend to a Friendgroup</a>
+		</div>
+        <div class="remove_friend_box">
+			<a href="/remove_friend">Remove a friend from a Friendgroup</a>
+        </div>
+        <br>
+        <div class="create_friendgroup">
+            <form action="/create_friendgroup" method="POST">
+				<h3>Create a Friendgroup</h3>
+					<input type="text" name = "name" placeholder="group name" required/> <br>
+					<input type="text" name = "description" placeholder="group description" required/> <br>
+					<input type="submit" value = Post />
+			</form>
+        </div>
+		<br>
+
+		<div class="view_box">
+			<h3>Here are your friendgroups:</h3>
+
+			<table>
+				<th>Name</th>
+				<th>Owner</th>
+				<th>Description</th>
+	
+				{% for line in groups %}
+					<tr>
+						<td>{{line.fg_name}}</td>
+						<td>{{line.owner_email}}</td>
+						<td>{{line.description}}</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<br>
+		<div class="home_box">
+			<a href="/home">Go back Home</a>
+		</div>
+		<div class="tag_box">
+			<a href="/tag">Manage my Tags</a>
+		</div>
+	</body>
+</html>
