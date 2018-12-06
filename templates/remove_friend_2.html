@@ -65,9 +65,9 @@
         border: 3px dotted violet;
         padding: 5px;
     }
-	input[type='radio'] { 
-		transform: scale(2); 
-	}
+    input[type='radio'] { 
+        transform: scale(2); 
+    }
 </style>
 
 <html>
@@ -76,31 +76,28 @@
 	<body>
 		<div class="welcome_box">
 			<h1>Welcome {{fname}}</h1>
-		</div>
-		<br>
-        <div class="view_box">
-			<h3>Select one of your groups to add a friend:</h3>
         </div>
+        
         <br>
+        
+        <div class="view_box">
+			<h3>Select one of your members to remove from {{fg_name}}</h3>
+        </div>
+
+        <br>
+
 		<div class="post_box">
 			<form action="/add_friend_post" method="POST">
-                <h3>Add a friend to your group</h3>
-                    {% for line in groups %}
+                <h3>Select a member</h3>
+                    {% for line in members %}
                         <div class="post_field">
-                            Name: {{line.fg_name}} 
-                            <input type="radio" name="fg_name" value = "group_name" required/>
+                            Name: {{line.fname}} {{line.lname}}
+                            <input type="radio" name="member_email" value="{{line.email}}" required/>
                         </div>
                     {% endfor %}
+                    <input type="hidden" name="fg_name" value="{{line.fg_name}}">
                     <br>
-                    <br>
-                    <div class="info_field">
-                        <input type="text" name = "fname" placeholder="First Name" required/> <br>
-                        <input type="text" name = "lname" placeholder="Last Name" required/> <br>
-                        <input type="submit" value = Post />
-                    </div>
-                    {% if error %}
-                        <p class="error"><strong>Error:</strong> {{error}}</p>
-                    {% endif %}
+                    <input type="submit" value = Select />
 			</form>
 		</div>
 
