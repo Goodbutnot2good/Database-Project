@@ -185,7 +185,7 @@ def tag():
     return render_template('tag.html', tags=data, fname = session['fname'])
 
 #handle the post method for approving / declining tag applications.
-@app.route('/edit_tag', methods=['GET', 'POST'])
+@app.route('/edit_tag', methods=['POST'])
 def edit_tag():
     #grab the request data
     email_tagged = session['email']
@@ -231,7 +231,7 @@ def about(item_id):
                                          comments = comments, fname = session['fname'])
 
 #Post a content item        
-@app.route('/add_comments', methods=['GET', 'POST'])
+@app.route('/add_comments', methods=['POST'])
 def add_comments():
     #grab request data
     email = session['email']
@@ -250,7 +250,7 @@ def add_comments():
 def pdfdetail():
     email = session['email']
     
-
+#Show all of the groups that this user belongs to.
 @app.route('/friendgroup')
 def friendgroup():
     email = session['email']
@@ -259,6 +259,7 @@ def friendgroup():
     data = run_sql(query, email, 'all')
     return render_template('friendgroup.html', groups=data, fname=session['fname'])
 
+#Show a list of all the groups that this user is an owner of to be modified.
 @app.route('/add_friend')
 def add_friend(error=None):
     error = request.args.get('error')
@@ -268,13 +269,15 @@ def add_friend(error=None):
     data = run_sql(query, email, 'all')
     return render_template('add_friend.html', groups=data, fname=session['fname'], error=error)
 
-@app.route('/add_friend_post', methods=['GET', 'POST'])
+#Given a specific group and person, attempt to add this person to the group. Return to friendgroup page or show error.
+@app.route('/add_friend_post', methods=['POST'])
 def add_friend_post():
     owner_email = session['email']
     fg_name, fname, lname = request.form['fg_name'], request.form['fname'], request.form['lname']
     
     query = """SELECT email FROM Person WHERE fname = %s AND lname = %s"""
     friend_email = run_sql(query, (fname, lname), 'all')
+
     #Handle error when person is not found
     if len(friend_email) < 1:
         return redirect(url_for('add_friend', error="Error: Person not found with first and last name!"))
@@ -288,11 +291,12 @@ def add_friend_post():
         friend_email = friend_email[0]['email']
         run_sql_commit(query, (friend_email, owner_email, fg_name))
     #Handle error where person is already in group
-    except Exception as e:
+    except:
         return redirect(url_for('add_friend', error= "Error: This person already exists in this group!"))
 
     return redirect(url_for('friendgroup'))
 
+#Show a list of all groups that the user is an owner. Used to determine which group a person wants to modify
 @app.route('/remove_friend')
 def remove_friend():
     email = session['email']
@@ -301,6 +305,7 @@ def remove_friend():
     data = run_sql(query, email, 'all')
     return render_template('remove_friend.html', groups=data, fname=session['fname'])
 
+#Given a specific group, show a list of all members to be chosen for removal from group.
 @app.route('/remove_friend_post', methods=['POST'])
 def remove_friend_post():
     owner_email = session['email']
@@ -312,6 +317,7 @@ def remove_friend_post():
     data = run_sql(query, (owner_email, fg_name, owner_email), 'all')
     return render_template('remove_friend_2.html', members=data, fname=session['fname'], fg_name=fg_name)
 
+#Given a specific group and specific person, attempt to delete this person from a group.
 @app.route('/remove_friend_post_2', methods=['POST'])
 def remove_friend_post_2():
     owner_email = session['email']
@@ -322,14 +328,16 @@ def remove_friend_post_2():
     run_sql_commit(query, (email, owner_email, fg_name))
 
     #remove all tags made by this person on items shared to this friendgroup
-    #by grabbing all item_ids shared to this friendgroup, and then remove all instances tagged by member on those item_ids. 
+    #by grabbing all item_ids shared to this friendgroup, and then remove all 
+    #instances tagged by member on those item_ids. 
     query = """DELETE FROM Tag WHERE email_tagger = %s AND 
             item_id IN 
                 (SELECT item_id FROM Share WHERE owner_email = %s AND fg_name = %s)"""
     run_sql_commit(query, (email, owner_email, fg_name))
 
     #remove all ratings made by this person on items shared to this friendgroup
-    #by grabbing all ratings that have the item_ids shared to this friendgroup, and then remove all those ratings which match the member and item_id
+    #by grabbing all ratings that have the item_ids shared to this friendgroup, 
+    #and then remove all those ratings which match the member and item_id
     query = """DELETE FROM Rate WHERE email = %s AND 
             item_id IN
                 (SELECT item_id FROM Share WHERE owner_email = %s AND fg_name = %s)"""
@@ -337,7 +345,8 @@ def remove_friend_post_2():
 
     return redirect(url_for('friendgroup'))
 
-@app.route('/create_friendgroup', methods=['GET', 'POST'])
+#Create a new friendgroup and return to friendgroup page.
+@app.route('/create_friendgroup', methods=['POST'])
 def create_friendgroup():
     email = session['email']
     name, description = request.form['name'], request.form['description']
@@ -351,6 +360,63 @@ def create_friendgroup():
     run_sql_commit(query, (email, email, name))
 
     return redirect(url_for('friendgroup'))
+
+#Show a page to manage all of the ratings made by the user
+@app.route('/rating')
+def rating():
+    email = session['email']
+    query = """SELECT item_name, emoji, rate_time, item_id FROM 
+            ContentItem NATURAL JOIN Rate 
+            WHERE email = %s"""
+    data = run_sql(query, email, 'all')
+    return render_template('rating.html', data=data)
+
+#Show all the ratings made on an item 
+@app.route('/rating_info', methods=['POST'])
+def rating_info():
+    item_id = request.form['item_id']
+
+    #grab the information about the rating made by members
+    query = """SELECT rate_time, emoji, fname, lname FROM 
+            Person NATURAL JOIN Rate
+            WHERE item_id = %s"""
+    data = run_sql(query, item_id, 'all')
+
+    #grab the item name 
+    query = """SELECT item_name FROM ContentItem WHERE item_id = %s"""
+    item_name = run_sql(query, item_id, 'one')['item_name']
+    return render_template('rating_info.html', data=data, fname=session['fname'], item_name=item_name)
+
+#Delete a rating and return the to rating page.
+@app.route("/rating_delete", methods=['POST'])
+def rating_delete():
+    email, item_id = session['email'], request.form['item_id']
+    query = """DELETE FROM Rate WHERE email = %s AND item_id = %s"""
+    run_sql_commit(query, (email, item_id))
+    return redirect(url_for('rating'))
+
+#Given a specific item, show a page to add a rating to it.
+@app.route("/rating_add", methods=['GET', 'POST'])
+def rating_add(item_id=None, error=None):
+    item_id = request.form['item_id']
+    return render_template('rating_add.html', item_id=item_id, fname=session['fname'], error=error)
+
+#Given a specific item and rating, add a rating and return to home page
+@app.route("/rating_add_post", methods=['POST'])
+def rating_add_post():
+    email, emoji, item_id = session['email'], request.form['emoji'], request.form['item_id']
+    
+    query = """INSERT INTO Rate VALUES (%s, %s, %s, %s)"""
+    ts = time.time()
+    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+    #Handle possible error where the person already rated this item. If so, notify the user.
+    try:
+        run_sql_commit(query, (email, item_id, timestamp, emoji))
+        return redirect(url_for('home'))
+    except Exception as e:
+        return render_template('rating_add.html', item_id=item_id, fname=session['fname'], error="Error: You have already rated this item")
+
 
 app.secret_key = 'some key that you will never guess'
 #Run the app on localhost port 5000
