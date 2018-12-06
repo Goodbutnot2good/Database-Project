@@ -243,7 +243,7 @@ def add_comments():
     query = """INSERT INTO Comment
                 (email, item_id, comment_time, comment) 
                 VALUES(%s, %s, %s, %s)"""
-    run_sql(query, (email, int(item), timestamp, comment), 'one', True)
+    run_sql_commit(query, (email, int(item), timestamp, comment))
     return redirect(url_for('about', item_id = int(item)))
 
 @app.route('/pdfdetail')
