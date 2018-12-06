@@ -130,7 +130,6 @@ def post():
     f_path, i_name = request.form['file_path'], request.form['item_name']
     #check if public checkbox is not empty. Convert boolean to 0 or 1 value.
     priOrPub = request.form.get('priOrPub')
-    print(priOrPub)
     if (priOrPub == "public"): 
         visible = True
     else:
@@ -272,8 +271,8 @@ def add_friend(error=None):
 @app.route('/add_friend_post', methods=['GET', 'POST'])
 def add_friend_post():
     owner_email = session['email']
-    group_name, fname, lname = request.form['fg_name'], request.form['fname'], request.form['lname']
-
+    fg_name, fname, lname = request.form['fg_name'], request.form['fname'], request.form['lname']
+    
     query = """SELECT email FROM Person WHERE fname = %s AND lname = %s"""
     friend_email = run_sql(query, (fname, lname), 'all')
     #Handle error when person is not found
@@ -286,9 +285,10 @@ def add_friend_post():
     
     try:
         query = """INSERT INTO Belong VALUES (%s, %s, %s)"""
-        run_sql_commit(query, (friend_email, owner_email, group_name))
+        friend_email = friend_email[0]['email']
+        run_sql_commit(query, (friend_email, owner_email, fg_name))
     #Handle error where person is already in group
-    except:
+    except Exception as e:
         return redirect(url_for('add_friend', error= "Error: This person already exists in this group!"))
 
     return redirect(url_for('friendgroup'))
@@ -297,7 +297,7 @@ def add_friend_post():
 def remove_friend():
     email = session['email']
     #select all friendgroups that this person belongs to. Grab that friendgroup's name, owner, and description. 
-    query = """SELECT fg_name FROM Belong NATURAL JOIN Friendgroup WHERE owner_email = %s"""
+    query = """SELECT DISTINCT fg_name FROM Belong NATURAL JOIN Friendgroup WHERE owner_email = %s"""
     data = run_sql(query, email, 'all')
     return render_template('remove_friend.html', groups=data, fname=session['fname'])
 
@@ -309,36 +309,47 @@ def remove_friend_post():
     query = """SELECT fname, lname, email FROM 
                 Person NATURAL JOIN Belong 
                 WHERE owner_email = %s AND fg_name = %s AND email != %s"""
-    data = run_sql(query2, (owner_email, fg_name, owner_email), 'all')
+    data = run_sql(query, (owner_email, fg_name, owner_email), 'all')
     return render_template('remove_friend_2.html', members=data, fname=session['fname'], fg_name=fg_name)
 
-#@app.route('/remove_friend_post_2', methods=['POST'])
-#def remove_friend_post2():
-#    owner_email = session['email']
-#    email, fg_name = request.form['member_email'], request.form['fg_name']
+@app.route('/remove_friend_post_2', methods=['POST'])
+def remove_friend_post_2():
+    owner_email = session['email']
+    email, fg_name = request.form['member_email'], request.form['fg_name']
 
     #remove this member from the friendgroup
-#    query = """DELETE FROM Friendgroup WHERE """
+    query = """DELETE FROM Belong WHERE email= %s AND owner_email = %s AND fg_name = %s"""
+    run_sql_commit(query, (email, owner_email, fg_name))
 
     #remove all tags made by this person on items shared to this friendgroup
     #by grabbing all item_ids shared to this friendgroup, and then remove all instances tagged by member on those item_ids. 
-
+    query = """DELETE FROM Tag WHERE email_tagger = %s AND 
+            item_id IN 
+                (SELECT item_id FROM Share WHERE owner_email = %s AND fg_name = %s)"""
+    run_sql_commit(query, (email, owner_email, fg_name))
 
     #remove all ratings made by this person on items shared to this friendgroup
     #by grabbing all ratings that have the item_ids shared to this friendgroup, and then remove all those ratings which match the member and item_id
+    query = """DELETE FROM Rate WHERE email = %s AND 
+            item_id IN
+                (SELECT item_id FROM Share WHERE owner_email = %s AND fg_name = %s)"""
+    run_sql_commit(query, (email, owner_email, fg_name))
 
+    return redirect(url_for('friendgroup'))
 
 @app.route('/create_friendgroup', methods=['GET', 'POST'])
 def create_friendgroup():
-    #grab the user's name, group name, and group description
     email = session['email']
     name, description = request.form['name'], request.form['description']
+
     #create the friendgroup
     query = """INSERT INTO Friendgroup VALUES (%s, %s, %s)"""
     run_sql_commit(query, (email, name, description))
+
     #add person to Belong
     query = """INSERT INTO Belong VALUES (%s, %s, %s)"""
     run_sql_commit(query, (email, email, name))
+
     return redirect(url_for('friendgroup'))
 
 app.secret_key = 'some key that you will never guess'
