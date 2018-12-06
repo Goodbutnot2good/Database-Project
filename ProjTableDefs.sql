@@ -6,7 +6,7 @@ CREATE TABLE PdfDetail(
     item_id int, 
     last_modified Timestamp, 
     num_of_pages int, 
-    PRIMARY KEY(email, item_id), 
+    PRIMARY KEY(item_id), 
     FOREIGN KEY(item_id)REFERENCES ContentItem(item_id)
 );
 
