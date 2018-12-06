@@ -126,8 +126,12 @@ def post():
     email = session['email']
     f_path, i_name = request.form['file_path'], request.form['item_name']
     #check if public checkbox is not empty. Convert boolean to 0 or 1 value.
-    visible = int(request.form.get('public') != None)
-    print("value of visible is ", visible)
+    priOrPub = request.form.get('priOrPub')
+    print(priOrPub)
+    if (priOrPub == "public"): 
+        visible = True
+    else:
+        visible = False
 
     ts = time.time()
     timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
