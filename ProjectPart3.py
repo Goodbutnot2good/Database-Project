@@ -17,24 +17,27 @@ conn = pymysql.connect(host='localhost',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
 
-#Method to run an sql query. Please use this instead of writing the same 3 lines everytime.
-#Input: query, data to be used in query, and amount, which is either "one" or "all" determines fetchone() or fetchall(). Last parameter is optional and will determine if commit() will be called.
+#Method to run an sql query without commit.
+#Input: query, data to be used in query, and amount, which is either "one" or "all" determines fetchone() or fetchall(). 
 #Output: returns data from query
-def run_sql(query, data, amount, comm=None):
+def run_sql(query, data, amount):
     cursor = conn.cursor()
     cursor.execute(query, data)
     data = None
-
     if amount == "one":
         data = cursor.fetchone()
     elif amount == "all":
         data = cursor.fetchall()
-
-    if comm:
-        conn.commit()
     cursor.close()
     return data
-
+#Method to run an sql query with commit. 
+#Input: query, data to be used in query.
+#output: none.
+def run_sql_commit(query, data):
+    cursor = conn.cursor()
+    cursor.execute(query, data)
+    conn.commit()
+    cursor.close()
 
 #Define a route to hello function
 #View public content​​
@@ -99,7 +102,7 @@ def registerAuth():
     else:
         password = hashlib.sha256(password.encode('utf-8')).hexdigest()
         query = 'INSERT INTO Person(email, password, fname, lname) VALUES(%s, %s, %s, %s)'
-        run_sql(query, (email, password, f_name, l_name), 'all', True)
+        run_sql_commit(query, (email, password, f_name, l_name))
         return redirect('/')
 
 #View shared content items and info about them
@@ -126,15 +129,19 @@ def post():
     email = session['email']
     f_path, i_name = request.form['file_path'], request.form['item_name']
     #check if public checkbox is not empty. Convert boolean to 0 or 1 value.
-    visible = int(request.form.get('public') != None)
-    print("value of visible is ", visible)
+    priOrPub = request.form.get('priOrPub')
+    print(priOrPub)
+    if (priOrPub == "public"): 
+        visible = True
+    else:
+        visible = False
 
     ts = time.time()
     timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     query = """INSERT INTO ContentItem 
                 (email_post, post_time, file_path, item_name, is_pub) 
                 VALUES(%s, %s, %s, %s, %s)"""
-    run_sql(query, (email, timestamp, f_path, i_name, visible), 'one', True)
+    run_sql_commit(query, (email, timestamp, f_path, i_name, visible))
     return redirect(url_for('home'))
 
 @app.route('/logout')
@@ -152,7 +159,6 @@ def tag():
                 WHERE email_tagged = %s AND status = "false"
                 ORDER BY tagtime DESC"""
     data = run_sql(query, email, 'all')
-    print("This isteh data", data)
     return render_template('tag.html', tags=data, fname = session['fname'])
 
 #handle the post method for approving / declining tag applications.
@@ -167,12 +173,12 @@ def edit_tag():
         query = """UPDATE Tag
                     SET status = "true" 
                     WHERE email_tagged = %s AND email_tagger = %s AND item_id = %s"""
-        run_sql(query, (email_tagged, email_tagger, item_id), 'one', True)
+        run_sql_commit(query, (email_tagged, email_tagger, item_id))
     #if the person declines the tag, delete from Tag database.
     elif new_status == "decline":
         query = """DELETE FROM Tag 
                     WHERE email_tagged = %s AND email_tagger = %s AND item_id = %s"""
-        run_sql(query, (email_tagged, email_tagger, item_id), 'one', True)
+        run_sql_commit(query, (email_tagged, email_tagger, item_id))
     
     #return to the tag page
     return redirect(url_for('tag'))
@@ -217,6 +223,94 @@ def add_comments():
     run_sql(query, (email, int(item), timestamp, comment), 'one', True)
     return redirect(url_for('about', item_id = int(item)))
 
+@app.route('/friendgroup')
+def friendgroup():
+    email = session['email']
+    #select all friendgroups that this person belongs to. Grab that friendgroup's name, owner, and description. 
+    query = """SELECT owner_email, fg_name, description FROM Belong NATURAL JOIN Friendgroup WHERE email = %s"""
+    data = run_sql(query, email, 'all')
+    return render_template('friendgroup.html', groups=data, fname=session['fname'])
+
+@app.route('/add_friend')
+def add_friend(error=None):
+    error = request.args.get('error')
+    email = session['email']
+    #select all friendgroups that this person owns. Grab that friendgroup's name and description. 
+    query = """SELECT fg_name FROM Belong NATURAL JOIN Friendgroup WHERE owner_email = %s"""
+    data = run_sql(query, email, 'all')
+    return render_template('add_friend.html', groups=data, fname=session['fname'], error=error)
+
+@app.route('/add_friend_post', methods=['GET', 'POST'])
+def add_friend_post():
+    owner_email = session['email']
+    group_name, fname, lname = request.form['fg_name'], request.form['fname'], request.form['lname']
+
+    query = """SELECT email FROM Person WHERE fname = %s AND lname = %s"""
+    friend_email = run_sql(query, (fname, lname), 'all')
+    #Handle error when person is not found
+    if len(friend_email) < 1:
+        return redirect(url_for('add_friend', error="Error: Person not found with first and last name!"))
+
+    #Handle error where multiple people with the same first and last name
+    if len(friend_email) > 1:
+        return redirect(url_for('add_friend', error = "Error: Multiple people with the same first and last name!"))
+    
+    try:
+        query = """INSERT INTO Belong VALUES (%s, %s, %s)"""
+        run_sql_commit(query, (friend_email, owner_email, group_name))
+    #Handle error where person is already in group
+    except:
+        return redirect(url_for('add_friend', error= "Error: This person already exists in this group!"))
+
+    return redirect(url_for('friendgroup'))
+
+@app.route('/remove_friend')
+def remove_friend():
+    email = session['email']
+    #select all friendgroups that this person belongs to. Grab that friendgroup's name, owner, and description. 
+    query = """SELECT fg_name FROM Belong NATURAL JOIN Friendgroup WHERE owner_email = %s"""
+    data = run_sql(query, email, 'all')
+    return render_template('remove_friend.html', groups=data, fname=session['fname'])
+
+@app.route('/remove_friend_post', methods=['POST'])
+def remove_friend_post():
+    owner_email = session['email']
+    fg_name = request.form['fg_name']
+    #find all the members of this friendgroup besides the owner
+    query = """SELECT fname, lname, email FROM 
+                Person NATURAL JOIN Belong 
+                WHERE owner_email = %s AND fg_name = %s AND email != %s"""
+    data = run_sql(query2, (owner_email, fg_name, owner_email), 'all')
+    return render_template('remove_friend_2.html', members=data, fname=session['fname'], fg_name=fg_name)
+
+#@app.route('/remove_friend_post_2', methods=['POST'])
+#def remove_friend_post2():
+#    owner_email = session['email']
+#    email, fg_name = request.form['member_email'], request.form['fg_name']
+
+    #remove this member from the friendgroup
+#    query = """DELETE FROM Friendgroup WHERE """
+
+    #remove all tags made by this person on items shared to this friendgroup
+    #by grabbing all item_ids shared to this friendgroup, and then remove all instances tagged by member on those item_ids. 
+
+
+    #remove all ratings made by this person on items shared to this friendgroup
+    #by grabbing all ratings that have the item_ids shared to this friendgroup, and then remove all those ratings which match the member and item_id
+
+
+@app.route('/create_friendgroup', methods=['GET', 'POST'])
+def create_friendgroup():
+    #grab the user's name, group name, and group description
+    email = session['email']
+    name, description = request.form['name'], request.form['description']
+    #create the friendgroup
+    query = """INSERT INTO Friendgroup VALUES (%s, %s, %s)"""
+    run_sql_commit(query, (email, name, description))
+    #add person to Belong
+    query = """INSERT INTO Belong VALUES (%s, %s, %s)"""
+    run_sql_commit(query, (email, email, name))
+    return redirect(url_for('friendgroup'))
 
 app.secret_key = 'some key that you will never guess'
 #Run the app on localhost port 5000

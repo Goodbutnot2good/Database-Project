@@ -53,7 +53,7 @@
 		border: 3px dotted rosybrown;
 		padding: 5px;
 	}
-	.blog_box, .tag_box {
+	.tag_box, .friendgroup_box{
 		margin: 0 auto;
 		text-align: center;
 		font-size: x-large;
@@ -77,13 +77,16 @@
         padding-top: 5px;
         border: 2px solid black;
     }
+	.margin-page {
+		margin: 60px
+	}
 
 </style>
 
 <html>
 	<head> 
 	</head>
-	<body>
+	<body class="margin-page">
 		<div class="logout_box">
 			<a href="/logout">Logout</a>
 		</div>
@@ -99,8 +102,10 @@
 				<div class="post_field">
 					<input type="text" name = "file_path" placeholder="file path" required/> <br>
 					<input type="text" name = "item_name" placeholder="item name" required/> <br>
-
-					<input type="checkbox" name = "public" checked = "true"/><div class="post_label">Public</div><br>
+					<select name = "priOrPub">
+						<option value="public">Public</option>
+						<option value="private">Private</option>
+					  </select>
 					<input type="submit" value = Post />
 				</div>
 			</form>
@@ -138,11 +143,11 @@
             </div>
 		</div>
 		<br>
-		<div class="blog_box">
-			<a href="/select_blogger">Select a blogger</a>
-		</div>
-		<div class="blog_box">
+		<div class="tag_box">
 			<a href="/tag">Manage my Tags</a>
+		</div>
+		<div class="friendgroup_box">
+			<a href="/friendgroup">Manage my Friendgroups</a>
 		</div>
 	</body>
 </html>
