@@ -142,7 +142,31 @@ def post():
                 (email_post, post_time, file_path, item_name, is_pub) 
                 VALUES(%s, %s, %s, %s, %s)"""
     run_sql_commit(query, (email, timestamp, f_path, i_name, visible))
+
+    query = """SELECT item_id 
+                FROM ContentItem 
+                WHERE email_post = %s AND timestamp = %s AND file_path = %s AND item_name = %s"""
+    itemId = run_sql(query, (email, timestamp, f_path, i_name), 'one' )
+
+    # This function could be implemented with some API in future
+    # Suppose we pass in the file path 
+    # and the function returns a dictionary containing last_modified and num_of_pages
+    info = getPdfDetail(f_path)
+    
+    # for demo, just gonna assign some arbitrary value
+    info = {"last_modified" : "2018-12-05 20:12:02", "num_of_pages" : 38}
+
+    query = """INSERT INTO PdfDetail
+                (item_id, last_modified, num_of_pages) 
+                VALUES(%s, %s, %s)"""
+    run_sql_commit(query, (itemId, info["last_modified"], info["num_of_pages"]))
+
     return redirect(url_for('home'))
+
+def getPdfDetail(f_path):
+    return 0
+    # This function could be implemented by using some API, 
+    # will finish that someday.. 
 
 @app.route('/logout')
 def logout():
@@ -222,6 +246,11 @@ def add_comments():
                 VALUES(%s, %s, %s, %s)"""
     run_sql(query, (email, int(item), timestamp, comment), 'one', True)
     return redirect(url_for('about', item_id = int(item)))
+
+@app.route('/pdfdetail')
+def pdfdetail():
+    email = session['email']
+    
 
 @app.route('/friendgroup')
 def friendgroup():
