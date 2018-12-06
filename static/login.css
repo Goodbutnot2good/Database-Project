@@ -1,0 +1,26 @@
+.back_button {
+    text-align: center;
+    display: inline-block;
+    font-size: x-large;
+    margin: 0 auto;
+    border: 3px dotted rosybrown;
+    padding: 5px;
+    width: 7%;
+}
+.login_box {
+    text-align: center;
+    display: block;
+    width: 80%;
+    margin: 0 auto;
+    border: 3px dotted pink;
+    font-size: x-large;
+    padding: 5px;
+    border: 3px dotted brown;
+}
+input {
+    width: 40%; 
+    height: 9%;
+    font-size: 25px;
+    display: inline-block;
+    margin: 0 auto;
+}
