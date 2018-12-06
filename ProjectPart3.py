@@ -205,6 +205,30 @@ def edit_tag():
     
     #return to the tag page
     return redirect(url_for('tag'))
+
+@app.route('/view_tags', methods = ['GET', 'POST'], defaults = {'item_id' : None})
+@app.route('/view_tags/<item_id>', methods = ['GET', 'POST'])
+def view_tags(item_id):
+    email = session['email']
+    print("old item_id", item_id)
+    if not item_id:
+        item_id = request.form.get('item_id')
+    print("new item_id", item_id)
+    query = """SELECT email_tagged, email_tagger, tagtime
+                 FROM Tag
+                WHERE status = 'true' 
+                  AND item_id = %s"""
+    tags = run_sql(query, (item_id), "all")
+    return render_template('view_tags.html', tags = tags, item_id = item_id)
+
+
+@app.route('/tag_user', methods = ['GET', 'POST'])
+def tag_user():
+    email = session['email']
+    tagged_email, item = request.form['tagged_email'], request.form['item_id']
+    find_query = """SELECT * FROM Person WHERE email = %s"""
+    return redirect(url_for('view_tags', item_id = item_id))
+
 @app.route('/about', methods = ['GET', 'POST'], defaults={'item_id' : None})
 @app.route('/about/<item_id>', methods = ['GET', 'POST'])
 def about(item_id):

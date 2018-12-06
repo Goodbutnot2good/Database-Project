@@ -138,6 +138,12 @@
 								<input type="submit" value = about />
 							</div>
 						</form>
+						<form action="/view_tags" method="POST">
+							<input type="hidden" name="item_id" value="{{line.item_id}}">
+							<div class="td">
+								<input type="submit" value = "view tags" />
+							</div>
+						</form>
                     </div>
                 {% endfor %}
             </div>
