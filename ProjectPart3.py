@@ -176,6 +176,46 @@ def edit_tag():
     
     #return to the tag page
     return redirect(url_for('tag'))
+@app.route('/about', methods = ['GET', 'POST'], defaults={'item_id' : None})
+@app.route('/about/<item_id>', methods = ['GET', 'POST'])
+def about(item_id):
+    email = session['email']
+    print("this is request.form", request.form)
+    #print("this is item_id", item_id)
+    if not item_id:
+        item_id = request.form.get('item_id')
+    print("this is item_id", item_id)
+    query_p = """SELECT DISTINCT item_id, email_post, post_time, file_path, item_name 
+                FROM ContentItem
+                WHERE item_id = %s"""
+    post = run_sql(query_p, (item_id), "all")
+
+
+    query_c = """SELECT fname, lname, comment_time, comment
+                   FROM Comment NATURAL JOIN Person
+                  WHERE item_id = %s
+               ORDER BY comment_time DESC"""
+
+    comments = run_sql(query_c, (item_id), "all")
+
+    return render_template('about.html', username = email, post = post, item = item_id,
+                                         comments = comments, fname = session['fname'])
+
+#Post a content item        
+@app.route('/add_comments', methods=['GET', 'POST'])
+def add_comments():
+    #grab request data
+    email = session['email']
+    comment, item = request.form['comment'], request.form['item_id']
+    #check if public checkbox is not empty. Convert boolean to 0 or 1 value.
+    ts = time.time()
+    print("this is item_id in /add_comments ", item)
+    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    query = """INSERT INTO Comment
+                (email, item_id, comment_time, comment) 
+                VALUES(%s, %s, %s, %s)"""
+    run_sql(query, (email, int(item), timestamp, comment), 'one', True)
+    return redirect(url_for('about', item_id = int(item)))
 
 
 app.secret_key = 'some key that you will never guess'

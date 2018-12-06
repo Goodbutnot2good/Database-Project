@@ -68,6 +68,15 @@
 		text-align: center;
 
 	}
+	.table > * { 
+        display: table-row; 
+    }
+    .table > * > * { 
+        display: table-cell; 
+        width: 30%;
+        padding-top: 5px;
+        border: 2px solid black;
+    }
 
 </style>
 
@@ -102,23 +111,31 @@
 		<div class="view_box">
 			<h3>Here are your posts:</h3>
 
-			<table>
-				<th>item_id</th>
-				<th>email</th>
-				<th>post time</th>
-				<th>file path</th>
-				<th>item name</th>
-	
-				{% for line in posts %}
-					<tr>
-						<td>{{line.item_id}}</td>
-						<td>{{line.email_post}}</td>
-						<td>{{line.post_time}}</td>
-						<td>{{line.file_path}}</td>
-						<td>{{line.item_name}}</td>
-					</tr>
-				{% endfor %}
-			</table>
+			<div class="table">
+                <div class="tr">
+                    <div class="td">item_id</div>
+                    <div class="td">email</div>
+                    <div class="td">post time</div>
+                    <div class="td">file path</div>
+                    <div class="td">item name</div>
+                </div>
+
+                {% for line in posts %}
+                    <div class="tr">
+                        <div class="td">{{line.item_id}}</div>
+                        <div class="td">{{line.email_post}}</div>
+                        <div class="td">{{line.post_time}}</div>
+                        <div class="td">{{line.file_path}}</div>
+                        <div class="td">{{line.item_name}}</div>
+                        <form action="/about" method="POST">
+							<input type="hidden" name="item_id" value="{{line.item_id}}">
+							<div class="td">
+								<input type="submit" value = about />
+							</div>
+						</form>
+                    </div>
+                {% endfor %}
+            </div>
 		</div>
 		<br>
 		<div class="blog_box">
