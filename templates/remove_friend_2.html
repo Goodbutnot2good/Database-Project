@@ -87,7 +87,7 @@
         <br>
 
 		<div class="post_box">
-			<form action="/add_friend_post" method="POST">
+			<form action="/remove_friend_post_2" method="POST">
                 <h3>Select a member</h3>
                     {% for line in members %}
                         <div class="post_field">
@@ -95,7 +95,7 @@
                             <input type="radio" name="member_email" value="{{line.email}}" required/>
                         </div>
                     {% endfor %}
-                    <input type="hidden" name="fg_name" value="{{line.fg_name}}">
+                    <input type="hidden" name="fg_name" value="{{fg_name}}">
                     <br>
                     <input type="submit" value = Select />
 			</form>

@@ -88,7 +88,7 @@
                     {% for line in groups %}
                         <div class="post_field">
                             Name: {{line.fg_name}} 
-                            <input type="radio" name="fg_name" value = "group_name" required/>
+                            <input type="radio" name="fg_name" value = "{{line.fg_name}}" required/>
                         </div>
                     {% endfor %}
                     <br>
