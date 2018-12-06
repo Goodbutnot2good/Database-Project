@@ -68,13 +68,16 @@
 		text-align: center;
 
 	}
+	.margin-page {
+		margin: 60px
+	}
 
 </style>
 
 <html>
 	<head> 
 	</head>
-	<body>
+	<body class="margin-page">
 		<div class="logout_box">
 			<a href="/logout">Logout</a>
 		</div>
@@ -90,8 +93,10 @@
 				<div class="post_field">
 					<input type="text" name = "file_path" placeholder="file path" required/> <br>
 					<input type="text" name = "item_name" placeholder="item name" required/> <br>
-
-					<input type="checkbox" name = "public" checked = "true"/><div class="post_label">Public</div><br>
+					<select name = "priOrPub">
+						<option value="public">Public</option>
+						<option value="private">Private</option>
+					  </select>
 					<input type="submit" value = Post />
 				</div>
 			</form>
