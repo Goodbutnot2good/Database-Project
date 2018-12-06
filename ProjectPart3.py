@@ -189,15 +189,6 @@ def friendgroup():
     #select all friendgroups that this person belongs to. Grab that friendgroup's name, owner, and description. 
     query = """SELECT owner_email, fg_name, description FROM Belong NATURAL JOIN Friendgroup WHERE email = %s"""
     data = run_sql(query, email, 'all')
-    #select everyone who is part of the friendgroup that owner is part of. Exclude the owner.
-    query2 = """SELECT owner_email, fg_name, description, email FROM 
-                Belong NATURAL JOIN Friendgroup
-                WHERE (owner_email, fg_name) IN 
-                    (SELECT owner_email, fg_name FROM Belong WHERE email = %s)
-                AND email != %s"""
-    data2 = run_sql(query2, (email, email), 'all')
-    print("This is the first data", data)
-    print("This is the second data", data2)
     return render_template('friendgroup.html', groups=data, fname=session['fname'])
 
 @app.route('/add_friend')
@@ -216,10 +207,8 @@ def add_friend_post():
 
     query = """SELECT email FROM Person WHERE fname = %s AND lname = %s"""
     friend_email = run_sql(query, (fname, lname), 'all')
-    print("This is friend", friend_email)
     #Handle error when person is not found
     if len(friend_email) < 1:
-        print("At no friends")
         return redirect(url_for('add_friend', error="Error: Person not found with first and last name!"))
 
     #Handle error where multiple people with the same first and last name
@@ -235,8 +224,40 @@ def add_friend_post():
 
     return redirect(url_for('friendgroup'))
 
-#@app.route('/remove_friend')
-#def remove_friend():
+@app.route('/remove_friend')
+def remove_friend():
+    email = session['email']
+    #select all friendgroups that this person belongs to. Grab that friendgroup's name, owner, and description. 
+    query = """SELECT fg_name FROM Belong NATURAL JOIN Friendgroup WHERE owner_email = %s"""
+    data = run_sql(query, email, 'all')
+    return render_template('remove_friend.html', groups=data, fname=session['fname'])
+
+@app.route('/remove_friend_post', methods=['POST'])
+def remove_friend_post():
+    owner_email = session['email']
+    fg_name = request.form['fg_name']
+    #find all the members of this friendgroup besides the owner
+    query = """SELECT fname, lname, email FROM 
+                Person NATURAL JOIN Belong 
+                WHERE owner_email = %s AND fg_name = %s AND email != %s"""
+    data = run_sql(query2, (owner_email, fg_name, owner_email), 'all')
+    return render_template('remove_friend_2.html', members=data, fname=session['fname'], fg_name=fg_name)
+
+#@app.route('/remove_friend_post_2', methods=['POST'])
+#def remove_friend_post2():
+#    owner_email = session['email']
+#    email, fg_name = request.form['member_email'], request.form['fg_name']
+
+    #remove this member from the friendgroup
+#    query = """DELETE FROM Friendgroup WHERE """
+
+    #remove all tags made by this person on items shared to this friendgroup
+    #by grabbing all item_ids shared to this friendgroup, and then remove all instances tagged by member on those item_ids. 
+
+
+    #remove all ratings made by this person on items shared to this friendgroup
+    #by grabbing all ratings that have the item_ids shared to this friendgroup, and then remove all those ratings which match the member and item_id
+
 
 @app.route('/create_friendgroup', methods=['GET', 'POST'])
 def create_friendgroup():
