@@ -1,6 +1,15 @@
 
 
 
+-- New Query, please add it and run it before working on next feature
+CREATE TABLE PdfDetail(
+    item_id int, 
+    last_modified Timestamp, 
+    num_of_pages int, 
+    PRIMARY KEY(email, item_id), 
+    FOREIGN KEY(item_id)REFERENCES ContentItem(item_id)
+);
+
 -- Creating tables
 
 CREATE TABLE Person(
