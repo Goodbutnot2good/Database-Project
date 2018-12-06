@@ -71,6 +71,16 @@ CREATE TABLE Tag (
     FOREIGN KEY(item_id) REFERENCES ContentItem(item_id)
 );
 
+CREATE TABLE Comment (
+    email VARCHAR(20),
+    item_id int,
+    comment_time Timestamp,
+    comment VARCHAR(140),
+    PRIMARY KEY(email, item_id, comment_time),
+    FOREIGN KEY(email) REFERENCES Person(email),
+    FOREIGN KEY(item_id) REFERENCES ContentItem(item_id)
+);
+
 
 
 

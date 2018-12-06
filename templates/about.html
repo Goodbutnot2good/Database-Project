@@ -1,0 +1,148 @@
+<style type="text/css">
+    .back_box {
+        margin: 0 auto;
+        text-align: center;
+        border: 3px dotted teal;
+        width: 10%;
+        display: inline-block;
+        padding: 5px;
+        font-size: x-large;
+    }
+    table {
+        font-size: x-large;
+        margin: 0 auto;
+        padding: 5px;
+        border: 1px solid black; 
+        text-align: center;       
+    }​  
+    table, td {
+        border: 1px solid black;
+        font-size: x-large;
+        padding: 10px;
+        text-align: center;
+    }
+    .welcome_box {
+        text-align: center;
+        font-size: large;
+        display: block;
+        margin: 0 auto;
+        width: 50%;
+        border: 3px dotted orange;
+    }
+    .logout_box {
+        text-align: center;
+        font-size: x-large;
+        float: right;
+        width: 6%;
+        border: 3px dotted olive;
+        padding: 5px;
+    }
+    .post_box {
+        text-align: center;
+        font-size: large;
+        border: 3px dotted green;
+    }
+    .post_field * {
+        width: 300px; 
+        height: 50px;
+        display: inline-block;
+        margin: 0 auto;
+    }
+    .post_label {
+        display: flex;
+        margin-bottom: 0px;
+        width: 10px;
+        height: 10px;
+        text-align: left;
+    }
+    .view_box {
+        text-align: center;
+        display: block;
+        margin: 0 auto;
+        border: 3px dotted rosybrown;
+        padding: 5px;
+    }
+    .blog_box, .tag_box {
+        margin: 0 auto;
+        text-align: center;
+        font-size: x-large;
+        border: 3px dotted teal;
+        width: 10%;
+        display: inline-block;
+        padding: 5px;
+    }
+    input {
+        font-size: x-large;
+        padding: 5px;
+        text-align: center;
+
+    }
+
+</style>
+
+<html>
+    <head> 
+    </head>
+    <body>
+    <div class="view_box">
+            <h3>Chosen post:</h3>
+
+            <table>
+                <th>item_id</th>
+                <th>email</th>
+                <th>post time</th>
+                <th>file path</th>
+                <th>item name</th>
+    
+                {% for line in post %}
+                    <tr>
+                        <td>{{line.item_id}}</td>
+                        <td>{{line.email_post}}</td>
+                        <td>{{line.post_time}}</td>
+                        <td>{{line.file_path}}</td>
+                        <td>{{line.item_name}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <br>
+        <div class="post_box">
+            <form action="/add_comments" method="POST">
+                <h3>Add a comment</h3>
+                <div class="post_field">
+                    <input type="text" name = "comment" placeholder="Write a comment..." required/> <br>
+                    <input type="hidden" name="item_id" value = "{{item}}">
+                    <input type="submit" value = Post />
+                </div>
+            </form>
+        </div>
+
+        <br>
+        <div class="view_box">
+            <h3>Comments:</h3>
+
+            <table>
+                <th>first name</th>
+                <th>last name</th>
+                <th>post time</th>
+                <th>comment</th>
+    
+                {% for line in comments %}
+                    <tr>
+                        <td>{{line.fname}}</td>
+                        <td>{{line.lname}}</td>
+                        <td>{{line.comment_time}}</td>
+                        <td>{{line.comment}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <br>
+        <div class="back_box">
+            <a href="/home">Back to Home</a>
+        </div>
+
+    </body>
+</html>
