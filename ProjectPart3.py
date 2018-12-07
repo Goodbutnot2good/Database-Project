@@ -260,6 +260,8 @@ def tag_user():
     #if not visible:
     return redirect(url_for('view_tags', item_id = item_id, error = "User doesn't have access to this post."))
 
+
+
 @app.route('/about', methods = ['GET', 'POST'], defaults={'item_id' : None})
 @app.route('/about/<item_id>', methods = ['GET', 'POST'])
 def about(item_id):
@@ -283,8 +285,7 @@ def about(item_id):
     comments = run_sql(query_c, (item_id), "all")
 
     return render_template('about.html', username = email,     post = post, item = item_id,
-                                         comments = comments, fname = session['fname'],
-                                         error    = error)
+                                         comments = comments, fname = session['fname'])
 
 #Post a content item        
 @app.route('/add_comments', methods=['POST'])
