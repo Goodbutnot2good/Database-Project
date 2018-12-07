@@ -143,10 +143,13 @@ def post():
                 VALUES(%s, %s, %s, %s, %s)"""
     run_sql_commit(query, (email, timestamp, f_path, i_name, visible))
 
+    print(email, timestamp, f_path, i_name)
     query = """SELECT item_id 
                 FROM ContentItem 
-                WHERE email_post = %s AND timestamp = %s AND file_path = %s AND item_name = %s"""
-    itemId = run_sql(query, (email, timestamp, f_path, i_name), 'one' )
+                WHERE email_post = %s AND post_time = %s AND file_path = %s AND item_name = %s"""
+    itemId = run_sql(query, (email, timestamp, f_path, i_name), 'one' )["item_id"]
+
+    print("From the post of the content item ((( itemID is -> ", itemId)
 
     # This function could be implemented with some API in future
     # Suppose we pass in the file path 
@@ -206,12 +209,13 @@ def edit_tag():
     
     #return to the tag page
     return redirect(url_for('tag'))
+
 @app.route('/about', methods = ['GET', 'POST'], defaults={'item_id' : None})
 @app.route('/about/<item_id>', methods = ['GET', 'POST'])
 def about(item_id):
     email = session['email']
-    print("this is request.form", request.form)
-    #print("this is item_id", item_id)
+    # print("this is request.form", request.form)
+    # print("this is item_id", item_id)
     if not item_id:
         item_id = request.form.get('item_id')
     print("this is item_id", item_id)
@@ -247,9 +251,21 @@ def add_comments():
     run_sql_commit(query, (email, int(item), timestamp, comment))
     return redirect(url_for('about', item_id = int(item)))
 
-@app.route('/pdfdetail')
-def pdfdetail():
-    email = session['email']
+@app.route('/pdf_detail', methods = ['GET', 'POST'], defaults={'item_id' : None})
+@app.route('/pdf_detail/<item_id>', methods = ['GET', 'POST'])
+def pdfdetail(item_id):
+    email = session['email']    
+    if not item_id: 
+        item_id = request.args['item_id']
+    print("this is item_id  -> ", item_id)
+    query = """SELECT item_id, last_modified, num_of_pages 
+                FROM PdfDetail
+                WHERE item_id = %s"""
+    file_detail = run_sql(query, item_id, "one")
+
+    return render_template('pdf_detail.html', username = email, item = item_id,
+                                         detail = file_detail, fname = session['fname'])
+    
     
 
 @app.route('/friendgroup')
