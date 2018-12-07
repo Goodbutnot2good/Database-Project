@@ -117,10 +117,15 @@ def home():
                     )
                 OR email_post = %s
                 ORDER BY post_time DESC"""
+
     data = run_sql(query, (email, email), 'all')
 
+    error = None
+    if 'error' in session:
+        error = session['error']
+        session.pop('error')
     #why do we pass in username???? i can't find it used anywhere in home.html
-    return render_template('home.html', username=email, posts=data, fname = session['fname'])
+    return render_template('home.html', username=email, posts=data, fname = session['fname'], error = error)
 
 
 #Post a content item        
@@ -128,30 +133,34 @@ def home():
 def post():
     #grab request data
     email = session['email']
-    f_path, i_name = request.form['file_path'], request.form['item_name']
+    file_path, item_name = request.form['file_path'], request.form['item_name']
     #check if public checkbox is not empty. Convert boolean to 0 or 1 value.
     priOrPub = request.form.get('priOrPub')
     if (priOrPub == "public"): 
         visible = True
     else:
         visible = False
+        query = """SELECT DISTINCT owner_email, fg_name, description FROM Belong NATURAL JOIN Friendgroup WHERE email = %s"""
+        groups = run_sql(query, (email), 'all')
+        return render_template('select_group.html', groups = groups, file_path = file_path, item_name = item_name, fname = session['fname'])
+
 
     ts = time.time()
     timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     query = """INSERT INTO ContentItem 
                 (email_post, post_time, file_path, item_name, is_pub) 
                 VALUES(%s, %s, %s, %s, %s)"""
-    run_sql_commit(query, (email, timestamp, f_path, i_name, visible))
+    run_sql_commit(query, (email, timestamp, file_path, item_name, visible))
 
     query = """SELECT item_id 
                 FROM ContentItem 
                 WHERE email_post = %s AND post_time = %s AND file_path = %s AND item_name = %s"""
-    itemId = run_sql(query, (email, timestamp, f_path, i_name), 'one' )
+    itemId = run_sql(query, (email, timestamp, file_path, item_name), 'one' )
 
     # This function could be implemented with some API in future
     # Suppose we pass in the file path 
     # and the function returns a dictionary containing last_modified and num_of_pages
-    info = getPdfDetail(f_path)
+    info = getPdfDetail(file_path)
     
     # for demo, just gonna assign some arbitrary value
     info = {"last_modified" : "2018-12-05 20:12:02", "num_of_pages" : 38}
@@ -162,6 +171,18 @@ def post():
     #run_sql_commit(query, (itemId, info["last_modified"], info["num_of_pages"]))
 
     return redirect(url_for('home'))
+
+@app.route('/select_group')
+def select_group():
+    email = session['email']
+    file_path, item_name = request.form['file_path'], request.form['item_name']
+    selected_groups = request.form['selected_groups']
+    if len(selected_groups):
+        pass
+    session['error'] = "You must select at least one friend group"
+    return redirect(url_for('home'))
+
+
 
 def getPdfDetail(f_path):
     return 0
@@ -312,7 +333,7 @@ def pdfdetail():
 def friendgroup():
     email = session['email']
     #select all friendgroups that this person belongs to. Grab that friendgroup's name, owner, and description. 
-    query = """SELECT owner_email, fg_name, description FROM Belong NATURAL JOIN Friendgroup WHERE email = %s"""
+    query = """SELECT DISTINCT owner_email, fg_name, description FROM Belong NATURAL JOIN Friendgroup WHERE email = %s"""
     data = run_sql(query, email, 'all')
     return render_template('friendgroup.html', groups=data, fname=session['fname'])
 
@@ -322,7 +343,7 @@ def add_friend(error=None):
     error = request.args.get('error')
     email = session['email']
     #select all friendgroups that this person owns. Grab that friendgroup's name and description. 
-    query = """SELECT fg_name FROM Belong NATURAL JOIN Friendgroup WHERE owner_email = %s"""
+    query = """SELECT DISTINCT fg_name FROM Belong NATURAL JOIN Friendgroup WHERE owner_email = %s"""
     data = run_sql(query, email, 'all')
     return render_template('add_friend.html', groups=data, fname=session['fname'], error=error)
 
