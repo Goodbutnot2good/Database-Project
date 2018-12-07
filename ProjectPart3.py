@@ -311,8 +311,10 @@ def pdfdetail():
 def friendgroup():
     email = session['email']
     #select all friendgroups that this person belongs to. Grab that friendgroup's name, owner, and description. 
-    query = """SELECT owner_email, fg_name, description FROM Belong NATURAL JOIN Friendgroup WHERE email = %s"""
-    data = run_sql(query, email, 'all')
+    query = """SELECT owner_email, fg_name, description 
+        FROM Belong NATURAL JOIN Friendgroup 
+        WHERE email = %s AND owner_email != %s"""
+    data = run_sql(query, (email, email), 'all')
     return render_template('friendgroup.html', groups=data, fname=session['fname'])
 
 #Show a list of all the groups that this user is an owner of to be modified.
