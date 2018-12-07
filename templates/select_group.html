@@ -11,25 +11,30 @@
         <div class="view_box">
             <h3>Select one or more of your friendgroups to share {{item_name}}:</h3>
 
-            <div class="table">
-                <div class="th">Name</div>
-                <div class="th">Owner</div>
-                <div class="th">Description</div>
-    
-                {% for line in groups %}
+            <form action="/select_group" method="POST">
+                <div class="table">
                     <div class="tr">
-                        <div class="td">{{line.fg_name}}</div>
-                        <div class="td">{{line.owner_email}}</div>
-                        <div class="td">{{line.description}}</div>
-                        <div class="td">
-                            <form action="/select_group" method="POST">
+                        <div class="th">Name</div>
+                        <div class="th">Owner</div>
+                        <div class="th">Description</div>
+                    </div>
+
+                    {% for line in groups %}
+                        <div class="tr">
+                            <div class="td">{{line.fg_name}}</div>
+                            <div class="td">{{line.owner_email}}</div>
+                            <div class="td">{{line.description}}</div>
+                            <div class="td"> 
                                 <input type="hidden" name="owner_email" value="{{line.owner_email}}"/>
                                 <input type="checkbox" name="selected_groups" value="{{line.fg_name}}"/>
-                            </form>
+                            </div>
                         </div>
-                    </div>
-                {% endfor %}
-            </div class="table">
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="file_path" value="{{file_path}}"/>
+                <input type="hidden" name="item_name" value="{{item_name}}"/>
+                <input type="submit" value = Share />
+            </form>
         </div>
 
         <br>
