@@ -1,0 +1,50 @@
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='rating.css')}}" >
+<html>
+	<head> 
+	</head>
+	<body>
+		<div class="welcome_box">
+			<h1>Welcome {{fname}}</h1>
+        </div>
+        <br>
+		<div class="view_box">
+			<h3>Here are your ratings:</h3>
+
+			<div class="table">
+				<div class="tr">
+					<div class="th">Item_name</div>
+					<div class="th">Emoji</div>
+					<div class="th">Rate time</div>
+				</div>
+				{% for line in data %}
+					<div class="tr">
+
+						<div class="td">{{line.item_name}}</div>
+                        <div class="td">{{line.emoji}}</div>
+                        <div class="td">{{line.rate_time}}</div>
+
+                        <div class="td">
+                            <form action="/rating_delete" method="POST">
+                                <input type="hidden" name="item_id" value="{{line.item_id}}">
+                                <div class="td">
+                                    <input type="submit" value = delete />
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+				{% endfor %}
+            </div>
+		</div>
+		<br>
+		<div class="home_box">
+			<a href="/home">Go back Home</a>
+		</div>
+		<div class="tag_box">
+			<a href="/tag">Manage my Tags</a>
+        </div>
+        <div class="friendgroup_box">
+			<a href="/friendgroup">Manage my Friendgroups</a>
+		</div>
+	</body>
+</html>
