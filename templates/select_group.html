@@ -4,8 +4,45 @@
     <head>
     </head>
     <body>
+        <div class="welcome_box">
+            <h1>Welcome {{fname}}</h1>
+        </div>
 
+        <div class="view_box">
+            <h3>Select one or more of your friendgroups to share {{item_name}}:</h3>
 
-        
+            <div class="table">
+                <div class="th">Name</div>
+                <div class="th">Owner</div>
+                <div class="th">Description</div>
+    
+                {% for line in groups %}
+                    <div class="tr">
+                        <div class="td">{{line.fg_name}}</div>
+                        <div class="td">{{line.owner_email}}</div>
+                        <div class="td">{{line.description}}</div>
+                        <div class="td">
+                            <form action="/select_group" method="POST">
+                                <input type="hidden" name="owner_email" value="{{line.owner_email}}"/>
+                                <input type="checkbox" name="selected_groups" value="{{line.fg_name}}"/>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div class="table">
+        </div>
+
+        <br>
+
+        <div class="home_box">
+            <a href="/home">Go back Home</a>
+        </div>
+        <div class="tag_box">
+            <a href="/tag">Manage my Tags</a>
+        </div>
+        <div class="friendgroup_box">
+            <a href="/friendgroup">Manage my Friendgroups</a>
+        </div>
+
     </body>
 </html>
