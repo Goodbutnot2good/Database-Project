@@ -12,7 +12,6 @@
     border: 3px dotted rosybrown;
     padding: 5px;
     width: 100%;
-
 }
 .table {
     display: table;
@@ -27,7 +26,6 @@
     display: table-row; 
     margin: 0 auto;
     text-align: center;
-    width: 100%;
 }
 .table > * > * { 
     display: table-cell; 

@@ -177,8 +177,9 @@ def select_group():
     email = session['email']
     file_path, item_name = request.form['file_path'], request.form['item_name']
     selected_groups = request.form.getlist('selected_groups')
-    owner_emails = request.form["owner_email"]
-    print("This is selected_groups", selected_groups)
+    owner_emails = request.form.getlist('owner_email')
+    
+    print("This is owner_emails", owner_emails)
     if len(selected_groups):
         ts = time.time()
         timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -196,6 +197,7 @@ def select_group():
                          VALUES(%s, %s, %s)"""
         for i in range(len(selected_groups)):
             run_sql_commit(share_query, (selected_groups[i], owner_emails[i], item_id['item_id']))
+        return redirect(url_for('home'))
 
     session['error'] = "You must select at least one friend group"
     return redirect(url_for('home'))
