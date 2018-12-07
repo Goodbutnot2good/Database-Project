@@ -195,7 +195,7 @@ def select_group():
                          (fg_name, owner_email, item_id)
                          VALUES(%s, %s, %s)"""
         for i in range(len(selected_groups)):
-            run_sql_commit(share_query, (selected_groups[i], owner_emails[i], item_id))
+            run_sql_commit(share_query, (selected_groups[i], owner_emails[i], item_id['item_id']))
 
     session['error'] = "You must select at least one friend group"
     return redirect(url_for('home'))
