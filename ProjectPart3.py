@@ -115,8 +115,9 @@ def home():
                     (SELECT item_id FROM PriCoSha.Share WHERE fg_name IN 
                         (SELECT fg_name FROM Belong WHERE email = %s)
                     )
+                OR email_post = %s
                 ORDER BY post_time DESC"""
-    data = run_sql(query, email, 'all')
+    data = run_sql(query, (email, email), 'all')
 
     #why do we pass in username???? i can't find it used anywhere in home.html
     return render_template('home.html', username=email, posts=data, fname = session['fname'])
@@ -144,7 +145,7 @@ def post():
 
     query = """SELECT item_id 
                 FROM ContentItem 
-                WHERE email_post = %s AND timestamp = %s AND file_path = %s AND item_name = %s"""
+                WHERE email_post = %s AND post_time = %s AND file_path = %s AND item_name = %s"""
     itemId = run_sql(query, (email, timestamp, f_path, i_name), 'one' )
 
     # This function could be implemented with some API in future
@@ -158,7 +159,7 @@ def post():
     query = """INSERT INTO PdfDetail
                 (item_id, last_modified, num_of_pages) 
                 VALUES(%s, %s, %s)"""
-    run_sql_commit(query, (itemId, info["last_modified"], info["num_of_pages"]))
+    #run_sql_commit(query, (itemId, info["last_modified"], info["num_of_pages"]))
 
     return redirect(url_for('home'))
 
@@ -205,6 +206,60 @@ def edit_tag():
     
     #return to the tag page
     return redirect(url_for('tag'))
+
+@app.route('/view_tags', methods = ['GET', 'POST'], defaults = {'item_id' : None, 'error' : None})
+@app.route('/view_tags/<item_id>', methods = ['GET', 'POST'],defaults = {'error' : None})
+@app.route('/view_tags/<item_id>/<error>', methods = ['GET', 'POST'])
+def view_tags(item_id, error = None):
+    email = session['email']
+    if not item_id:
+        item_id = request.form.get('item_id')
+    query = """SELECT email_tagged, email_tagger, tagtime
+                 FROM Tag
+                WHERE status = 'true' 
+                  AND item_id = %s"""
+    tags = run_sql(query, (item_id), "all")
+    print(error)
+    return render_template('view_tags.html', tags = tags, item_id = item_id, error = error)
+
+
+@app.route('/tag_user', methods = ['GET', 'POST'])
+def tag_user():
+    email = session['email']
+    tagged_email, item_id = request.form['tagged_email'], request.form['item_id']
+    find_query = """SELECT * FROM Person WHERE email = %s"""
+    if len(run_sql(find_query, (tagged_email), "all")) < 1:
+        return redirect(url_for('view_tags', item_id = item_id, error = "User with this email doesn't exist"))
+    ts = time.time()
+    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    #if you are tagging yourself
+    if tagged_email == email:
+        insert_query = """INSERT INTO Tag(email_tagger, email_tagged, item_id, status, tagtime)
+                           VALUES (%s,%s,%s,%s,%s)"""
+        run_sql_commit(insert_query, (email, email, item_id, 'true', timestamp))
+        return redirect(url_for('view_tags', item_id = item_id))
+
+    #code to check if the item is visible for the tagged user
+    check_visible = """SELECT COUNT(*) 
+                         FROM Share NATURAL JOIN Belong
+                        WHERE email = %s
+                          AND item_id = %s"""
+    check_public = """SELECT COUNT(*) 
+                         FROM ContentItem
+                        WHERE is_pub = %s
+                        AND item_id = %s"""
+    visible = run_sql(check_visible, (tagged_email, item_id), "all")[0]["COUNT(*)"]
+    public = run_sql(check_public, (1, item_id), "all")[0]["COUNT(*)"]
+    
+    if visible > 0 or public > 0:
+        
+        insert_query = """INSERT INTO Tag(email_tagger, email_tagged, item_id, status, tagtime)
+                           VALUES (%s,%s,%s,%s,%s)"""
+        run_sql_commit(insert_query, (email, tagged_email, item_id, 'false', timestamp))
+        return redirect(url_for('view_tags', item_id = item_id))
+    #if not visible:
+    return redirect(url_for('view_tags', item_id = item_id, error = "User doesn't have access to this post."))
+
 @app.route('/about', methods = ['GET', 'POST'], defaults={'item_id' : None})
 @app.route('/about/<item_id>', methods = ['GET', 'POST'])
 def about(item_id):
@@ -227,8 +282,9 @@ def about(item_id):
 
     comments = run_sql(query_c, (item_id), "all")
 
-    return render_template('about.html', username = email, post = post, item = item_id,
-                                         comments = comments, fname = session['fname'])
+    return render_template('about.html', username = email,     post = post, item = item_id,
+                                         comments = comments, fname = session['fname'],
+                                         error    = error)
 
 #Post a content item        
 @app.route('/add_comments', methods=['POST'])
@@ -238,11 +294,11 @@ def add_comments():
     comment, item = request.form['comment'], request.form['item_id']
     #check if public checkbox is not empty. Convert boolean to 0 or 1 value.
     ts = time.time()
-    print("this is item_id in /add_comments ", item)
     timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     query = """INSERT INTO Comment
                 (email, item_id, comment_time, comment) 
                 VALUES(%s, %s, %s, %s)"""
+
     run_sql_commit(query, (email, int(item), timestamp, comment))
     return redirect(url_for('about', item_id = int(item)))
 
