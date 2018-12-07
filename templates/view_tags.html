@@ -95,6 +95,9 @@
                 <input type="hidden" name="item_id" value = "{{item_id}}">
                 <input type="submit" value = Tag />
             </div>
+            {% if error %}
+                <p class="error"><strong>Error:</strong> {{error}}</p>
+            {% endif %}
         </form>
     </div>
     <br>
