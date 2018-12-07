@@ -172,11 +172,12 @@ def post():
 
     return redirect(url_for('home'))
 
-@app.route('/select_group')
+@app.route('/select_group', methods=['POST'])
 def select_group():
     email = session['email']
     file_path, item_name = request.form['file_path'], request.form['item_name']
-    selected_groups = request.form['selected_groups']
+    selected_groups = request.form.getlist('selected_groups')
+    print("This is selected_groups", selected_groups)
     if len(selected_groups):
         pass
     session['error'] = "You must select at least one friend group"
