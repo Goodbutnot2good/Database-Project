@@ -1,0 +1,80 @@
+.welcome_box {
+    text-align: center;
+    font-size: large;
+    display: block;
+    margin: 0 auto;
+    width: 50%;
+    border: 3px dotted orange;
+}
+.logout_box {
+    text-align: center;
+    font-size: x-large;
+    float: right;
+    width: 6%;
+    border: 3px dotted olive;
+    padding: 5px;
+}
+.post_box {
+    text-align: center;
+    font-size: large;
+    border: 3px dotted green;
+}
+.post_field * {
+    width: 300px; 
+    height: 50px;
+    display: inline-block;
+    margin: 0 auto;
+}
+.view_box {
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    border: 3px dotted rosybrown;
+    padding: 5px;
+    width: 100%;
+}
+.tag_box {
+    margin: 0 auto;
+    text-align: center;
+    font-size: x-large;
+    border: 3px dotted teal;
+    width: 20%;
+    display: inline-block;
+    padding: 5px;
+}
+.rating_box {
+    margin: 0 auto;
+    text-align: center;
+    font-size: x-large;
+    border: 3px dotted burlywood;
+    width: 20%;
+    display: inline-block;
+    padding: 5px;
+}
+.friendgroup_box {
+    margin: 0 auto;
+    text-align: center;
+    font-size: x-large;
+    border: 3px dotted red;
+    width: 20%;
+    display: inline-block;
+    padding: 5px;
+}
+input {
+    font-size: x-large;
+    padding: 5px;
+    text-align: center;
+}
+.table > * { 
+    display: table-row; 
+}
+.table > * > * { 
+    display: table-cell; 
+    width: 20%;
+    padding-top: 5px;
+    border: 2px solid black;
+    margin: 5px;
+}
+.margin-page {
+    margin: 60px
+}

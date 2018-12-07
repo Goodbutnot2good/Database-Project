@@ -1,74 +1,4 @@
-<style type="text/css">
-	table {
-    	font-size: x-large;
-    	margin: 0 auto;
-        padding: 5px;
-        border: 1px solid black; 
-		text-align: center;       
-	}​	
-	table, td {
-		border: 1px solid black;
-		font-size: x-large;
-		padding: 10px;
-		text-align: center;
-	}
-	.welcome_box {
-		text-align: center;
-		font-size: large;
-		display: block;
-    	margin: 0 auto;
-		width: 50%;
-		border: 3px dotted orange;
-	}
-	.post_box {
-		text-align: center;
-		font-size: large;
-		border: 3px dotted green;
-	}
-	.post_field {
-    	margin: 0 auto;
-        border: 3px dotted gold;
-        width: 30%;
-        font-size: x-large;
-        text-align: center;
-        margin: 5px;
-        padding: 5px;
-        margin-left: 35%;
-	}
-	.view_box {
-		text-align: center;
-		display: block;
-		margin: 0 auto;
-		border: 3px dotted rosybrown;
-		padding: 5px;
-	}
-	.tag_box, .friendgroup_box, .home_box{
-		margin: 0 auto;
-		text-align: center;
-		font-size: x-large;
-		border: 3px dotted teal;
-		width: 10%;
-		display: inline-block;
-		padding: 5px;
-	}
-	input {
-		font-size: x-large;
-		padding: 5px;
-		text-align: center;
-	}
-    .info_field {
-        display: block;
-        text-align: center;
-		font-size: x-large;
-        width: 50%;
-        margin: 0 auto;
-        border: 3px dotted violet;
-        padding: 5px;
-    }
-	input[type='radio'] { 
-		transform: scale(2); 
-	}
-</style>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='add_friend.css')}}" >
 
 <html>
 	<head> 
@@ -88,7 +18,7 @@
                     {% for line in groups %}
                         <div class="post_field">
                             Name: {{line.fg_name}} 
-                            <input type="radio" name="fg_name" value = "group_name" required/>
+                            <input type="radio" name="fg_name" value = "{{line.fg_name}}" required/>
                         </div>
                     {% endfor %}
                     <br>

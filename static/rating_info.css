@@ -1,0 +1,53 @@
+table {
+    font-size: x-large;
+    margin: 0 auto;
+    padding: 5px;
+    border: 1px solid black; 
+    text-align: center;  
+    width: 70%;     
+}​	
+table, td {
+    border: 1px solid black;
+    font-size: x-large;
+    padding: 5px;
+    text-align: center;
+}
+.welcome_box {
+    text-align: center;
+    font-size: large;
+    display: block;
+    margin: 0 auto;
+    width: 50%;
+    border: 3px dotted orange;
+}
+.view_box {
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    border: 3px dotted rosybrown;
+    padding: 5px;
+}
+.home_box, .tag_box, .friendgroup_box{
+    margin: 0 auto;
+    text-align: center;
+    font-size: x-large;
+    border: 3px dotted teal;
+    width: 10%;
+    display: inline-block;
+    padding: 5px;
+}
+.add_box {
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    border: 3px dotted rosybrown;
+    padding: 5px;
+    font-size: x-large;
+}
+input {
+    width: 40%; 
+    height: 9%;
+    font-size: 25px;
+    display: inline-block;
+    margin: 0 auto;
+}

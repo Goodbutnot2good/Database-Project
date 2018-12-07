@@ -1,0 +1,49 @@
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='rating_info.css')}}" >
+<html>
+	<head> 
+	</head>
+	<body>
+		<div class="welcome_box">
+			<h1>Welcome {{fname}}</h1>
+        </div>
+		<br>
+		<div class="add_box">
+			<form action="/rating_add_post" method="POST">
+				<input type="text" name = "emoji" placeholder="emoji" required/> </br>
+				<input type="submit" value = Submit />
+				{% if error %}
+					<p class="error"><strong>Error:</strong> {{error}}</p>
+				{% endif %}
+			</form>
+		</div>
+
+		<br>
+		<div class="view_box">
+			<h3>Here are the ratings for {{item_name}}</h3>
+
+			<table>
+				<th>Friend</th>
+				<th>Emoji</th>
+				<th>Rate time</th>
+
+				{% for line in data %}
+					<tr>
+						<td>{{line.fname}} {{line.lname}}</td>
+                        <td>{{line.emoji}}</td>
+                        <td>{{line.rate_time}}</td>
+                    </tr>
+				{% endfor %}
+			</table>
+		</div>
+		<br>
+		<div class="home_box">
+			<a href="/home">Go back Home</a>
+		</div>
+		<div class="tag_box">
+			<a href="/tag">Manage my Tags</a>
+        </div>
+        <div class="friendgroup_box">
+			<a href="/friendgroup">Manage my Friendgroups</a>
+		</div>
+	</body>
+</html>
