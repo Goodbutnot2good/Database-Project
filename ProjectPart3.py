@@ -177,9 +177,26 @@ def select_group():
     email = session['email']
     file_path, item_name = request.form['file_path'], request.form['item_name']
     selected_groups = request.form.getlist('selected_groups')
+    owner_emails = request.form["owner_email"]
     print("This is selected_groups", selected_groups)
     if len(selected_groups):
-        pass
+        ts = time.time()
+        timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        query = """INSERT INTO ContentItem 
+                (email_post, post_time, file_path, item_name, is_pub) 
+                VALUES(%s, %s, %s, %s, %s)"""
+        run_sql_commit(query, (email, timestamp, file_path, item_name, 0))
+        query = """SELECT item_id 
+                FROM ContentItem 
+                WHERE email_post = %s AND post_time = %s AND file_path = %s AND item_name = %s"""
+        item_id = run_sql(query, (email, timestamp, file_path, item_name), 'one' )
+        print("this is item_id",item_id)
+        share_query = """INSERT INTO Share 
+                         (fg_name, owner_email, item_id)
+                         VALUES(%s, %s, %s)"""
+        for i in range(len(selected_groups)):
+            run_sql_commit(share_query, (selected_groups[i], owner_emails[i], item_id))
+
     session['error'] = "You must select at least one friend group"
     return redirect(url_for('home'))
 
