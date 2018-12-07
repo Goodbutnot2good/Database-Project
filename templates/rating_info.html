@@ -6,7 +6,18 @@
 		<div class="welcome_box">
 			<h1>Welcome {{fname}}</h1>
         </div>
-        <br>
+		<br>
+		<div class="add_box">
+			<form action="/rating_add_post" method="POST">
+				<input type="text" name = "emoji" placeholder="emoji" required/> </br>
+				<input type="submit" value = Submit />
+				{% if error %}
+					<p class="error"><strong>Error:</strong> {{error}}</p>
+				{% endif %}
+			</form>
+		</div>
+
+		<br>
 		<div class="view_box">
 			<h3>Here are the ratings for {{item_name}}</h3>
 
