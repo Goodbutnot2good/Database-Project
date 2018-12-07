@@ -1,5 +1,5 @@
 #Import Flask Library
-from flask import Flask, render_template, request, session, url_for, redirect
+from flask import Flask, render_template, request, session, url_for, redirect, flash
 import pymysql.cursors
 import time
 import datetime
@@ -427,10 +427,21 @@ def rating():
     data = run_sql(query, email, 'all')
     return render_template('rating.html', data=data)
 
+#Given a selected item, save the selected item and show all the ratings made on an item
+@app.route('/rating_select', methods=['POST'])
+def rating_select():
+    session['item_id'] = request.form['item_id']
+    return redirect(url_for('rating_info'))
+
 #Show all the ratings made on an item 
-@app.route('/rating_info', methods=['POST'])
+@app.route('/rating_info')
 def rating_info():
-    item_id = request.form['item_id']
+    item_id = session['item_id']
+
+    error = None
+    if 'error' in session:
+        error = session['error']
+        session.pop('error')
 
     #grab the information about the rating made by members
     query = """SELECT rate_time, emoji, fname, lname FROM 
@@ -441,7 +452,7 @@ def rating_info():
     #grab the item name 
     query = """SELECT item_name FROM ContentItem WHERE item_id = %s"""
     item_name = run_sql(query, item_id, 'one')['item_name']
-    return render_template('rating_info.html', data=data, fname=session['fname'], item_name=item_name)
+    return render_template('rating_info.html', data=data, fname=session['fname'], item_name=item_name, item_id=item_id, error=error)
 
 #Delete a rating and return the to rating page.
 @app.route("/rating_delete", methods=['POST'])
@@ -451,16 +462,10 @@ def rating_delete():
     run_sql_commit(query, (email, item_id))
     return redirect(url_for('rating'))
 
-#Given a specific item, show a page to add a rating to it.
-@app.route("/rating_add", methods=['GET', 'POST'])
-def rating_add(item_id=None, error=None):
-    item_id = request.form['item_id']
-    return render_template('rating_add.html', item_id=item_id, fname=session['fname'], error=error)
-
 #Given a specific item and rating, add a rating and return to home page
 @app.route("/rating_add_post", methods=['POST'])
 def rating_add_post():
-    email, emoji, item_id = session['email'], request.form['emoji'], request.form['item_id']
+    email, emoji, item_id = session['email'], request.form['emoji'], session['item_id']
     
     query = """INSERT INTO Rate VALUES (%s, %s, %s, %s)"""
     ts = time.time()
@@ -469,9 +474,10 @@ def rating_add_post():
     #Handle possible error where the person already rated this item. If so, notify the user.
     try:
         run_sql_commit(query, (email, item_id, timestamp, emoji))
-        return redirect(url_for('home'))
-    except Exception as e:
-        return render_template('rating_add.html', item_id=item_id, fname=session['fname'], error="Error: You have already rated this item")
+        return redirect(url_for('rating_info'))
+    except:
+        session['error'] = 'Error: You have already rated this item'
+        return redirect(url_for('rating_info'))
 
 
 app.secret_key = 'some key that you will never guess'
