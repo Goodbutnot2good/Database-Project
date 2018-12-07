@@ -66,4 +66,5 @@ input {
 }
 input[type='radio'] { 
     transform: scale(2); 
+    width: 150%;
 }
