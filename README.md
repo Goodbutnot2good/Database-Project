@@ -43,9 +43,13 @@ Users have the ability to view, delete, and add ratings. Users can view the rati
 
 4) Extra data about pdf files - Yu Zhang
 a. Yu Zhang
+
 b. It allows the user to get extra information about the pdf file, last modified time, number of pages. In future, extra information could be provided are color/BW, resolution of pages, the size of the pages, etc. 
+
 c. Because it offers important details of the pdf file at a glance. The user wouldn't need to downloading/opening the file to access such information. 
+
 d. We have one extra table named PdfDetail. It has three columns, file_id, last_modified_time and num_of_pages. The primary key is the file_id. 
+
 e. Regarding queries, we need to insert the PdfDetails into the table while user post the content, and we need queries while the user is accessing the PdfDetail. 
     Insertion: 
         First we need to get the item_id so that we can insert a new row into PdfDetail. 
