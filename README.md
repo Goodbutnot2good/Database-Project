@@ -150,11 +150,11 @@ g.
 
 The DB Table looks like this 
 
-![pdf detail database](/photos/pdf_detail_db.png)
+![pdf detail db](/photos/pdf_detail_db.png)
 
 The page rendered after the user click to the pdf detail looks like this
 
-![pdf detail page](/photos/pdf_detail.png)
+![pdf detail](/photos/pdf_detail.png)
 
 ---
 
