@@ -92,6 +92,53 @@ g. The DB Table looks like this
 
 
 
+b. It allows the user to get extra information about the pdf file, last modified time, number of pages. In future, extra information could be provided are color/BW, resolution of pages, the size of the pages, etc. 
+
+c. Because it offers important details of the pdf file at a glance. The user wouldn't need to downloading/opening the file to access such information. 
+
+d. We have one extra table named PdfDetail. It has three columns, file_id, last_modified_time and num_of_pages. The primary key is the file_id. 
+
+e. Regarding queries, we need to insert the PdfDetails into the table while user post the content, and we need queries while the user is accessing the PdfDetail. 
+    
+    Insertion: 
+        
+        First we need to get the item_id so that we can insert a new row into PdfDetail. 
+            
+            query = """SELECT item_id 
+                FROM ContentItem 
+                WHERE email_post = %s AND post_time = %s AND file_path = %s AND item_name = %s"""
+            itemId = run_sql(query, (email, timestamp, file_path, item_name), 'one' )
+        
+        Second we need to do the actual insertion
+               
+               query = """INSERT INTO PdfDetail
+                    (item_id, last_modified, num_of_pages) 
+                    VALUES(%s, %s, %s)"""
+                run_sql_commit(query, (itemId["item_id"], info["last_modified"], info["num_of_pages"]))
+
+    Query: 
+        We need to query the DB with the itemID passed as a parameter. 
+            query = """SELECT item_id, last_modified, num_of_pages 
+                FROM PdfDetail
+                WHERE item_id = %s"""
+            file_detail = run_sql(query, item_id, "one")
+
+
+f. 
+
+Source code is in ProjectPart3.py around line 360. 
+
+Front end html page is in the file named pdf_detail.html
+
+So, when user hit the post button, the details regarding the pdf page will be extracted, (around line 160)
+and written into the SQL table. 
+
+Around line 360, under the route (/pdf_detail), the backend will query the DB with the Item ID and render the page to display pdf-detail to our users. 
+
+g. The DB Table looks like this 
+
+
+
 ---
 
 ## c. Specify the contributions of each team member
