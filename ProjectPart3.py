@@ -304,7 +304,7 @@ def tag_user():
     return redirect(url_for('view_tags', item_id = item_id, error = "User doesn't have access to this post."))
 
 
-
+'''
 @app.route('/about', methods = ['GET', 'POST'], defaults={'item_id' : None})
 @app.route('/about/<item_id>', methods = ['GET', 'POST'])
 def about(item_id):
@@ -344,7 +344,7 @@ def add_comments():
 
     run_sql_commit(query, (email, int(item), timestamp, comment))
     return redirect(url_for('about', item_id = int(item)))
-
+'''
 @app.route('/pdf_detail', methods = ['GET', 'POST'], defaults={'item_id' : None})
 @app.route('/pdf_detail/<item_id>', methods = ['GET', 'POST'])
 def pdfdetail(item_id):
@@ -464,14 +464,15 @@ def remove_friend_post_2():
                 (SELECT item_id FROM Share WHERE owner_email = %s AND fg_name = %s)"""
     run_sql_commit(query, (email, owner_email, fg_name))
 
-    #remove all comments made by this person on items shared to this friendgroup
-    #by grabbing all item_ids that have the item_ids shared to group, and which match
-    #the email of removed friend.
+    '''
+    remove all comments made by this person on items shared to this friendgroup
+    by grabbing all item_ids that have the item_ids shared to group, and which match
+    the email of removed friend.
     query = """DELETE FROM Comment WHERE email = %s AND 
             item_id IN 
                 (SELECT item_id FROM Share WHERE owner_email = %s AND fg_name = %s)"""
     run_sql_commit(query, (email, owner_email, fg_name))
-    
+    '''
     #return to the friendgroup page
     return redirect(url_for('friendgroup'))
 

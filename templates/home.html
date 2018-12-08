@@ -59,12 +59,6 @@
                         <div class="td">{{line.post_time}}</div>
                         <div class="td">{{line.file_path}}</div>
                         <div class="td">{{line.item_name}}</div>
-                        <form action="/about" method="POST">
-							<input type="hidden" name="item_id" value="{{line.item_id}}" />
-							<div class="td">
-								<input type="submit" value = about />
-							</div>
-						</form>
 						<form action="/view_tags" method="POST">
 							<input type="hidden" name="item_id" value="{{line.item_id}}">
 							<div class="td">
