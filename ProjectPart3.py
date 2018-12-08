@@ -350,14 +350,21 @@ def add_comments():
 @app.route('/pdf_detail/<item_id>', methods = ['GET', 'POST'])
 def pdfdetail(item_id):
     email = session['email']    
+
+    # if the item_id is null, we need to get our itemID from the post request sent from the form
+
     if not item_id: 
         item_id = request.form['item_id']
-    print("this is item_id  -> ", item_id)
+
+    # print("this is item_id  -> ", item_id)
+
+    # executing the query to get the information regarding the Pdf Details with the itemID
     query = """SELECT item_id, last_modified, num_of_pages 
                 FROM PdfDetail
                 WHERE item_id = %s"""
     file_detail = run_sql(query, item_id, "one")
 
+    # render the returned page called pdf_detail
     return render_template('pdf_detail.html', username = email, item = item_id,
                                          detail = file_detail, fname = session['fname'])
     
