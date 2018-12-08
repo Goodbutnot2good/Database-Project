@@ -146,9 +146,15 @@ and written into the SQL table.
 
 Around line 360, under the route (/pdf_detail), the backend will query the DB with the Item ID and render the page to display pdf-detail to our users. 
 
-g. The DB Table looks like this 
+g. 
 
+The DB Table looks like this 
 
+![pdf detail database](/photos/pdf_detail_db.png)
+
+The page rendered after the user click to the pdf detail looks like this
+
+![pdf detail page](/photos/pdf_detail.png)
 
 ---
 
