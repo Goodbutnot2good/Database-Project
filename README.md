@@ -77,6 +77,21 @@ e. Regarding queries, we need to insert the PdfDetails into the table while user
             file_detail = run_sql(query, item_id, "one")
 
 
+f. 
+
+Source code is in ProjectPart3.py around line 360. 
+
+Front end html page is in the file named pdf_detail.html
+
+So, when user hit the post button, the details regarding the pdf page will be extracted, (around line 160)
+and written into the SQL table. 
+
+Around line 360, under the route (/pdf_detail), the backend will query the DB with the Item ID and render the page to display pdf-detail to our users. 
+
+g. The DB Table looks like this 
+
+
+
 ---
 
 ## c. Specify the contributions of each team member
