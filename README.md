@@ -1,9 +1,16 @@
 # **Database-Project**
 # **Creators: Max Kim, Sofiia Barysheva, Yu Zhang**
 
+---
+
+---
+
+
 ## ATTENTION ALL TA/GRADER READ THIS!!!!!
 
-## THERE ARE TWO BRANCHES: "MASTER" AND "TA-USE-THIS-FOR-TEST-NO-EXTRA-FEATURE". MASTER CONTAINS EXTRA FEATURES, THE OTHER DOES NOT. IN THE ROOT OF EACH BRANCH, THERE IS A FILE CALLED "ProjTableDefs.sql". THE MASTER BRANCH WILL INCLUDE EXTRA TABLE DEFINITIONS, BUT THE OTHER WILL NOT. 
+## there are two branches: "master" and "ta-use-this-for-test-no-extra-feature". master contains extra features, the other does not. in the root of each branch, there is a file called "projtabledefs.sql". the master branch will include extra table definitions, but the other will not.
+
+---
 
 ---
 
