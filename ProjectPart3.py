@@ -409,12 +409,14 @@ def add_friend_post():
 
     return redirect(url_for('friendgroup'))
 
-#Show a list of all groups that the user is an owner. Used to determine which group a person wants to modify
+#Show a list of all groups that the user is an owner. Determines which group a person wants to modify
 @app.route('/remove_friend')
 def remove_friend():
     email = session['email']
-    #select all friendgroups that this person belongs to. Grab that friendgroup's name, owner, and description. 
-    query = """SELECT DISTINCT fg_name FROM Belong NATURAL JOIN Friendgroup WHERE owner_email = %s"""
+    #select all friendgroups that this person belongs to. Grab name, owner, and description. 
+    query = """SELECT DISTINCT fg_name 
+            FROM Belong NATURAL JOIN Friendgroup 
+            WHERE owner_email = %s"""
     data = run_sql(query, email, 'all')
     return render_template('remove_friend.html', groups=data, fname=session['fname'])
 
@@ -456,6 +458,7 @@ def remove_friend_post_2():
                 (SELECT item_id FROM Share WHERE owner_email = %s AND fg_name = %s)"""
     run_sql_commit(query, (email, owner_email, fg_name))
 
+    #return to the friendgroup page
     return redirect(url_for('friendgroup'))
 
 #Create a new friendgroup and return to friendgroup page.
