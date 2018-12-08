@@ -156,6 +156,8 @@ def post():
                 FROM ContentItem 
                 WHERE email_post = %s AND post_time = %s AND file_path = %s AND item_name = %s"""
     itemId = run_sql(query, (email, timestamp, file_path, item_name), 'one' )
+
+    # print("item ID from posting is ->", itemId)
     # This function could be implemented with some API in future
     # Suppose we pass in the file path 
     # and the function returns a dictionary containing last_modified and num_of_pages
@@ -167,7 +169,7 @@ def post():
     query = """INSERT INTO PdfDetail
                 (item_id, last_modified, num_of_pages) 
                 VALUES(%s, %s, %s)"""
-    #run_sql_commit(query, (itemId, info["last_modified"], info["num_of_pages"]))
+    run_sql_commit(query, (itemId["item_id"], info["last_modified"], info["num_of_pages"]))
 
     return redirect(url_for('home'))
 
@@ -349,7 +351,7 @@ def add_comments():
 def pdfdetail(item_id):
     email = session['email']    
     if not item_id: 
-        item_id = request.args['item_id']
+        item_id = request.form['item_id']
     print("this is item_id  -> ", item_id)
     query = """SELECT item_id, last_modified, num_of_pages 
                 FROM PdfDetail
