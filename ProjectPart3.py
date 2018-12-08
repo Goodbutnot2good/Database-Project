@@ -457,6 +457,14 @@ def remove_friend_post_2():
                 (SELECT item_id FROM Share WHERE owner_email = %s AND fg_name = %s)"""
     run_sql_commit(query, (email, owner_email, fg_name))
 
+    #remove all comments made by this person on items shared to this friendgroup
+    #by grabbing all item_ids that have the item_ids shared to group, and which match
+    #the email of removed friend.
+    query = """DELETE FROM Comment WHERE email = %s AND 
+            item_id IN 
+                (SELECT item_id FROM Share WHERE owner_email = %s AND fg_name = %s)"""
+    run_sql_commit(query, (email, owner_email, fg_name))
+    
     #return to the friendgroup page
     return redirect(url_for('friendgroup'))
 
