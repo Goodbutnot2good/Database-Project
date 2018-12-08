@@ -319,7 +319,6 @@ def about(item_id):
                 WHERE item_id = %s"""
     post = run_sql(query_p, (item_id), "all")
 
-
     query_c = """SELECT fname, lname, comment_time, comment
                    FROM Comment NATURAL JOIN Person
                   WHERE item_id = %s
