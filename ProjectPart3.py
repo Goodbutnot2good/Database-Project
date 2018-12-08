@@ -157,6 +157,7 @@ def post():
                 WHERE email_post = %s AND post_time = %s AND file_path = %s AND item_name = %s"""
     itemId = run_sql(query, (email, timestamp, file_path, item_name), 'one' )
 
+    '''
     # print("item ID from posting is ->", itemId)
     # This function could be implemented with some API in future
     # Suppose we pass in the file path 
@@ -170,7 +171,8 @@ def post():
                 (item_id, last_modified, num_of_pages) 
                 VALUES(%s, %s, %s)"""
     run_sql_commit(query, (itemId["item_id"], info["last_modified"], info["num_of_pages"]))
-
+    '''
+    
     return redirect(url_for('home'))
 
 @app.route('/select_group', methods=['POST'])
@@ -204,11 +206,12 @@ def select_group():
     return redirect(url_for('home'))
 
 
-
+'''
 def getPdfDetail(f_path):
     return 0
     # This function could be implemented by using some API, 
     # will finish that someday.. 
+'''
 
 @app.route('/logout')
 def logout():
@@ -344,7 +347,7 @@ def add_comments():
 
     run_sql_commit(query, (email, int(item), timestamp, comment))
     return redirect(url_for('about', item_id = int(item)))
-'''
+
 @app.route('/pdf_detail', methods = ['GET', 'POST'], defaults={'item_id' : None})
 @app.route('/pdf_detail/<item_id>', methods = ['GET', 'POST'])
 def pdfdetail(item_id):
@@ -366,8 +369,8 @@ def pdfdetail(item_id):
     # render the returned page called pdf_detail
     return render_template('pdf_detail.html', username = email, item = item_id,
                                          detail = file_detail, fname = session['fname'])
-    
-    
+'''  
+
 #Show all of the groups that this user belongs to.
 @app.route('/friendgroup')
 def friendgroup():

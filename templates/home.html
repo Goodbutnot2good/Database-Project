@@ -39,7 +39,6 @@
 
 			<div class="table">
                 <div class="tr">
-                    <div class="td">item_id</div>
                     <div class="td">email</div>
                     <div class="td">post time</div>
                     <div class="td">file path</div>
@@ -48,13 +47,6 @@
 
                 {% for line in posts %}
                     <div class="tr">
-						<form action="/pdf_detail" method="POST">
-							<input type="hidden" name="item_id" value="{{line.item_id}}" />
-							<div class="td">
-								<input type="submit" value="{{line.item_id}}"/>
-							</div>
-						</form>
-                        
                         <div class="td">{{line.email_post}}</div>
                         <div class="td">{{line.post_time}}</div>
                         <div class="td">{{line.file_path}}</div>

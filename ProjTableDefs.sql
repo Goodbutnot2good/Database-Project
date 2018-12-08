@@ -1,6 +1,6 @@
 
 
-
+/*
 -- New Query, please add it and run it before working on next feature
 CREATE TABLE PdfDetail(
     item_id int, 
@@ -9,6 +9,7 @@ CREATE TABLE PdfDetail(
     PRIMARY KEY(item_id), 
     FOREIGN KEY(item_id)REFERENCES ContentItem(item_id)
 );
+*/
 
 -- Creating tables
 
@@ -80,6 +81,7 @@ CREATE TABLE Tag (
     FOREIGN KEY(item_id) REFERENCES ContentItem(item_id)
 );
 
+/*
 CREATE TABLE Comment (
     email VARCHAR(20),
     item_id int,
@@ -89,6 +91,7 @@ CREATE TABLE Comment (
     FOREIGN KEY(email) REFERENCES Person(email),
     FOREIGN KEY(item_id) REFERENCES ContentItem(item_id)
 );
+*/
 
 
 
